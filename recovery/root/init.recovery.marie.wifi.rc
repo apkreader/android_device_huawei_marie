@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: Apache-2.0
+on early-init
+    setprop wifi.interface wlan0
+
+on boot
+    write /proc/sys/net/ipv4/ping_group_range "0 2147483647"
+
+on property:sys.aera.wlan.up=1
+    start servicemanager
+    setprop sys.aera.wlan.driver_ready 0
+    exec_start marie-wifi-init
+    setprop sys.aera.wlan.up 0
+
+on property:sys.aera.wlan.driver_ready=1
+    start wpa_supplicant
+
+service servicemanager /system/bin/servicemanager
+    override
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+
+service marie-wifi-init /system/bin/sh /system/bin/marie-wifi-init.sh
+    disabled
+    oneshot
+    user root
+    group root wifi inet
+    seclabel u:r:recovery:s0
+
+service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/vendor/etc/wifi/wpa_supplicant.conf -O/tmp/recovery/sockets
+    override
+    disabled
+    oneshot
+    user root
+    group root wifi inet net_admin net_raw
+    seclabel u:r:recovery:s0

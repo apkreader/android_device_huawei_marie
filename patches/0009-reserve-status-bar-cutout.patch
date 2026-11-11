@@ -1,0 +1,51 @@
+diff --git a/aeraui/core/status_bar.cpp b/aeraui/core/status_bar.cpp
+index a0651cc..79d8fbf 100644
+--- a/aeraui/core/status_bar.cpp
++++ b/aeraui/core/status_bar.cpp
+@@ -15,6 +15,9 @@
+ #include <vector>
+ 
+ #include <lvgl.h>
++#ifdef __ANDROID__
++#include <android-base/properties.h>
++#endif
+ 
+ #include "design.hpp"
+ #include "ui_components.hpp"
+@@ -953,6 +956,16 @@ void Refresh(StatusState *state, bool refresh_battery) {
+       show_percentage ? state->battery_text : state->battery_body) - 24;
+   const int cellular_reserved = show_mobile ? widgets::kCellularWidth + 18 : 0;
+   const int wifi_right = battery_left - cellular_reserved;
++  int network_left = 0;
++#ifdef __ANDROID__
++  // The device supplies the central cutout width in 1440-wide UI coordinates.
++  // Landscape puts the camera on a side edge, outside this status-bar row.
++  const int cutout = android::base::GetIntProperty<int>("ro.aera.ui.status_cutout_width", 0);
++  const int bar_width = lv_obj_get_width(state->bar);
++  if (cutout > 0 && lv_obj_get_width(state->screen) < lv_obj_get_height(state->screen))
++    network_left = bar_width / 2 + std::clamp(cutout, 0, 720) * bar_width / 2880;
++#endif
++
+   if (show_mobile) {
+     widgets::UpdateCellularIndicator(state->cellular, mobile);
+     lv_obj_align(state->cellular.root, LV_ALIGN_LEFT_MID, battery_left - widgets::kCellularWidth, 0);
+@@ -1043,8 +1056,8 @@ void Refresh(StatusState *state, bool refresh_battery) {
+     lv_obj_set_height(state->wifi,
+         lv_font_get_line_height(lv_obj_get_style_text_font(state->wifi, LV_PART_MAIN)));
+     lv_obj_update_layout(state->bar);
+-    const int available = wifi_right - lv_obj_get_x(activity_anchor) -
+-        lv_obj_get_width(activity_anchor) - 26 - (show_speed ? kWifiSpeedReserved : 0) - temperature_reserved;
++    const int available = wifi_right - std::max(network_left, lv_obj_get_x(activity_anchor) +
++        lv_obj_get_width(activity_anchor) + 26) - (show_speed ? kWifiSpeedReserved : 0) - temperature_reserved;
+     const int name_width = display.show_name ? std::clamp(lv_obj_get_width(state->wifi), 0,
+         std::max(0, std::min(available, 660 - (show_speed ? kWifiSpeedReserved : 0)) - widgets::kWifiIndicatorWidth - 12)) : 0;
+     lv_obj_set_width(state->wifi, name_width);
+@@ -1062,7 +1075,7 @@ void Refresh(StatusState *state, bool refresh_battery) {
+   }
+   if (show_speed) {
+     lv_obj_update_layout(state->bar);
+-    const int left = lv_obj_get_x(activity_anchor) + lv_obj_get_width(activity_anchor) + 26;
++    const int left = std::max(network_left, lv_obj_get_x(activity_anchor) + lv_obj_get_width(activity_anchor) + 26);
+     const int anchor = connection.connected ? lv_obj_get_x(state->wifi_icon.root) :
+         show_mobile ? lv_obj_get_x(state->cellular.root) : wifi_right;
+     const int x = std::max(left, anchor - kWifiSpeedReserved);

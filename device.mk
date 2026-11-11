@@ -5,6 +5,11 @@ PRODUCT_SOONG_NAMESPACES += $(DEVICE_PATH)
 PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false
 
 PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/recovery/root/init.recovery.marie.wifi.rc:recovery/root/init.recovery.marie.wifi.rc \
+    $(DEVICE_PATH)/recovery/root/system/bin/marie-wifi-init.sh:recovery/root/system/bin/marie-wifi-init.sh \
+    $(DEVICE_PATH)/recovery/root/system/etc/wifi/wpa_supplicant.conf:recovery/root/system/etc/wifi/wpa_supplicant.conf \
+    $(DEVICE_PATH)/recovery/root/system/etc/vintf/manifest.xml:recovery/root/system/etc/vintf/manifest.xml \
+    $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml:recovery/root/vendor/etc/vintf/manifest.xml \
     $(DEVICE_PATH)/recovery/root/init.recovery.kirin710.rc:recovery/root/init.recovery.kirin710.rc \
     $(DEVICE_PATH)/recovery/root/init.recovery.kirin710.usb.rc:recovery/root/init.recovery.kirin710.usb.rc \
     $(DEVICE_PATH)/recovery/root/ueventd.kirin710.rc:recovery/root/ueventd.kirin710.rc \

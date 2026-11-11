@@ -19,13 +19,17 @@ STOCK_SHA256 = 'bf0569021ab89199f0b20c880fa4998b687ad26553cf98ef07e403a819345e27
 PARTITION_SIZE = 33554432
 
 
-def ramdisk(data):
+def compressed_ramdisk(data):
     assert data[:8] == b'ANDROID!'
     kernel_size = struct.unpack_from('<I', data, 8)[0]
     size = struct.unpack_from('<I', data, 16)[0]
     page = struct.unpack_from('<I', data, 36)[0]
     assert kernel_size == 0 and page == 2048
-    return gzip.decompress(data[page:page+size])
+    return data[page:page+size]
+
+
+def ramdisk(data):
+    return gzip.decompress(compressed_ramdisk(data))
 
 
 def vbmeta(data):
@@ -44,17 +48,21 @@ def wrap(image, donor, executable):
     assert hashlib.sha256(stock).hexdigest() == STOCK_SHA256, 'Wrong stock donor'
     assert len(stock) == PARTITION_SIZE
     expected_cpio = ramdisk(original)
+    expected_compressed = compressed_ramdisk(original)
     executable.chmod(executable.stat().st_mode | 0o111)
     with tempfile.TemporaryDirectory(prefix='marie-container-', dir=image.parent) as temporary:
         work = Path(temporary)
-        subprocess.run([str(executable), 'unpack', str(image)], cwd=work, check=True)
+        # Retain the build's compressed payload; recompressing here would lose
+        # Zopfli's size savings before adding the Huawei container metadata.
+        subprocess.run([str(executable), 'unpack', '-n', str(image)], cwd=work, check=True)
         result = work / 'huawei-recovery.img'
         environment = dict(os.environ, PATCHVBMETAFLAG='false')
-        subprocess.run([str(executable), 'repack', str(donor), str(result)],
+        subprocess.run([str(executable), 'repack', '-n', str(donor), str(result)],
                        cwd=work, env=environment, check=True)
         output = result.read_bytes()
         assert len(output) == PARTITION_SIZE
         assert ramdisk(output) == expected_cpio, 'AERA CPIO changed during container repack'
+        assert compressed_ramdisk(output) == expected_compressed, 'Compressed ramdisk changed during repack'
         assert vbmeta(output) == vbmeta(stock), 'OEM metadata was not preserved byte for byte'
         assert output[:8] == b'ANDROID!'
         result.replace(image)

@@ -1,0 +1,65 @@
+diff --git a/aera_wlan_network.hpp b/aera_wlan_network.hpp
+index 270b460..f9e497d 100644
+--- a/aera_wlan_network.hpp
++++ b/aera_wlan_network.hpp
+@@ -3,9 +3,29 @@
+ 
+ #include <algorithm>
+ #include <string>
++#include <sstream>
+ 
+ namespace aera::wifi {
+ 
++inline std::string ScanSecurity(const std::string& flags,
++                                const std::string& key_management) {
++  bool supports_sae = key_management.empty();
++  std::istringstream capabilities(key_management);
++  std::string capability;
++  while (capabilities >> capability) {
++    if (capability == "SAE") supports_sae = true;
++  }
++  const bool sae = flags.find("SAE") != std::string::npos;
++  const bool psk = flags.find("PSK") != std::string::npos;
++  // Transition networks offer PSK to clients without SAE. Keep SAE-only
++  // networks identified as WPA3 rather than treating them as open or WPA2.
++  if (sae && (!psk || supports_sae)) return "WPA3";
++  if (flags.find("WPA2") != std::string::npos || flags.find("RSN") != std::string::npos)
++    return "WPA2";
++  if (flags.find("WPA") != std::string::npos) return "WPA";
++  return "OPEN";
++}
++
+ inline bool ValidNetworkName(const std::string& ssid) {
+   return !ssid.empty() && ssid.size() <= 32 &&
+       std::none_of(ssid.begin(), ssid.end(), [](unsigned char c) {
+diff --git a/wlan.cpp b/wlan.cpp
+index 933a946..4e8fedf 100644
+--- a/wlan.cpp
++++ b/wlan.cpp
+@@ -1536,6 +1536,10 @@ bool Wlan::BuildScanList() {
+         return false;
+     }
+ 
++    std::string key_management;
++    if (!SuppCmd("GET_CAPABILITY key_mgmt", key_management))
++        key_management.clear();
++
+     std::istringstream iss(output);
+     std::string line;
+     bool first_line = true;
+@@ -1571,14 +1575,7 @@ bool Wlan::BuildScanList() {
+             ssid.find('\r') != std::string::npos)
+             continue;
+ 
+-        std::string encryption = "OPEN";
+-        if (flags.find("SAE") != std::string::npos) {
+-            encryption = "WPA3";
+-        } else if (flags.find("WPA2") != std::string::npos || flags.find("RSN") != std::string::npos) {
+-            encryption = "WPA2";
+-        } else if (flags.find("WPA-PSK") != std::string::npos || flags.find("WPA") != std::string::npos) {
+-            encryption = "WPA";
+-        }
++        std::string encryption = aera::wifi::ScanSecurity(flags, key_management);
+ 
+         bool exists = false;
+         for (size_t i = 0; i < networks.size(); ++i) {

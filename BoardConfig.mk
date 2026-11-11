@@ -40,6 +40,7 @@ BOARD_RECOVERY_MKBOOTIMG_ARGS += --os_version 9.0.0 --os_patch_level 2020-07
 AB_OTA_UPDATER := false
 BOARD_USES_RECOVERY_AS_BOOT := false
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 33554432
+BOARD_RECOVERY_IMAGE_PREPARE = python3 $(DEVICE_PATH)/tools/trim-terminfo.py $(TARGET_RECOVERY_ROOT_OUT)
 BOARD_BOOTIMAGE_PARTITION_SIZE := 25165824
 BOARD_FLASH_BLOCK_SIZE := 4096
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -55,10 +56,12 @@ TARGET_USES_MKE2FS := true
 TARGET_RECOVERY_DEVICE_MODULES += \
     libboot_control_client \
     android.hardware.boot-V1-ndk \
+    android.hardware.security.secureclock-V1-ndk \
     libincfs
 TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += \
     $(TARGET_OUT_SHARED_LIBRARIES)/libboot_control_client.so \
     $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.boot-V1-ndk.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.security.secureclock-V1-ndk.so \
     $(TARGET_OUT_SHARED_LIBRARIES)/libincfs.so
 # Huawei container repacking is handled by custombootimg.mk.
 BOARD_AVB_ENABLE := false
@@ -85,6 +88,9 @@ AERA_MAX_BRIGHTNESS := 7350
 AERA_DEFAULT_BRIGHTNESS := 2205
 AERA_CUSTOM_BATTERY_PATH := /sys/class/power_supply/Battery
 AERA_NO_HAPTICS := true
+AERA_ENABLE_WLAN := 1
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+WPA_SUPPLICANT_VERSION := VER_0_8_X
 AERA_NO_REFLASH_CURRENT_RECOVERY := 1
 AERA_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true

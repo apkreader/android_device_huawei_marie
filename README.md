@@ -28,10 +28,14 @@ Working in device tests:
 - Power and volume buttons.
 - Touch on boot and after waking the screen.
 - Boot animation without the mid-animation screen interruption.
+- Wi-Fi driver initialization, scanning, WPA2 connection, and DHCP.
+
+Work in progress:
+
+- WPA3 is not enabled by the current Wi-Fi driver.
 
 Untested:
 
-- Wi-Fi.
 - File-based encryption (FBE) decryption.
 - MTP and ADB sideload.
 - MicroSD.
@@ -44,8 +48,11 @@ under Theme Engine > Text & size.
 ## Build
 
 Use the [AERA Android 16 manifest](https://github.com/AERA-Recovery/android_manifest),
-branch `aera-16.0`. Use this repository's `aera-16.0` branch and place it at
+branch `aera-16.0`. Place this repository at
 `device/huawei/marie`.
+
+Install `zopfli` on the build host. The recovery ramdisk uses gzip compression
+and must fit the 32 MiB partition.
 
 Proprietary files and build prebuilts are required. See [Stock files](#stock-files).
 From the AERA source root:
