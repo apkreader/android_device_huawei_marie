@@ -1,0 +1,20 @@
+--- a/aeraui/core/engine.cpp
++++ b/aeraui/core/engine.cpp
+@@ -326,13 +326,12 @@
+           static_cast<uint32_t>(scanout_surface1_->row_bytes),
+           LV_DISPLAY_RENDER_MODE_DIRECT);
+     } else {
+-      // A full-frame compositor is retained only as a safe non-DRM fallback.
+-      lv_display_set_color_format(
+-          display_, direct_scanout_ ? LV_COLOR_FORMAT_XRGB8888
+-                                    : LV_COLOR_FORMAT_ARGB8888);
++      // Retain the opaque canvas and redraw invalidated regions only.
++      // XRGB also enables LVGL's accelerated RGB blending on ARM64.
++      lv_display_set_color_format(display_, LV_COLOR_FORMAT_XRGB8888);
+       lv_display_set_buffers(display_, draw_buffer_, nullptr,
+                              static_cast<uint32_t>(buffer_size_),
+-                             LV_DISPLAY_RENDER_MODE_FULL);
++                             LV_DISPLAY_RENDER_MODE_DIRECT);
+     }
+     lv_display_set_flush_cb(display_, FlushDisplay);
+     // GpuRenderer reshapes its LVGL texture to the rotated logical viewport;

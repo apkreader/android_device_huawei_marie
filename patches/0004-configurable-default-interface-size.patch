@@ -1,0 +1,41 @@
+--- a/aeraui/platform/aera_backend.cpp
++++ b/aeraui/platform/aera_backend.cpp
+@@ -2511,14 +2511,17 @@
+     return false;
+   return DataManager::SetValue("aera_ui_font", plugin_id, 1) == 0;
+ }
++static int DefaultInterfaceSize() {
++  return std::clamp(android::base::GetIntProperty<int>(
++      "ro.aera.ui.default_interface_size", 1), 0, 3);
++}
++
+ InterfaceSize RecoveryInterfaceSize() {
+   LoadAeraPreferencesIfAvailable();
+   const int value = std::clamp(
+       DataManager::GetIntValue("aera_interface_size"), 0, 3);
+-  // DataManager returns zero for an unset integer. Preserve today's UI as the
+-  // default by storing human-readable names and treating empty as Normal.
+   const std::string stored = DataManager::GetStrValue("aera_interface_size");
+-  return stored.empty() ? InterfaceSize::kNormal
++  return stored.empty() ? static_cast<InterfaceSize>(DefaultInterfaceSize())
+                         : static_cast<InterfaceSize>(value);
+ }
+ bool RecoverySetInterfaceSize(InterfaceSize size) {
+@@ -2971,7 +2974,7 @@
+   preferences.surface_style = 0;
+   preferences.tinted_icon_backgrounds = 0;
+   preferences.themed_home_icons = 0;
+-  preferences.interface_size = 1;
++  preferences.interface_size = DefaultInterfaceSize();
+   preferences.language = AERA_DEFAULT_LANGUAGE;
+   preferences.keyboard_layout = "qwerty";
+   preferences.home_grid_columns = 3;
+@@ -3037,7 +3040,7 @@
+       DataManager::GetIntValue("aera_themed_home_icons") != 0 ? 1 : 0;
+   const std::string interface_size = DataManager::GetStrValue("aera_interface_size");
+   preferences.interface_size =
+-      interface_size.empty() ? 1 : std::clamp(atoi(interface_size.c_str()), 0, 3);
++      interface_size.empty() ? DefaultInterfaceSize() : std::clamp(atoi(interface_size.c_str()), 0, 3);
+   preferences.language = DataManager::GetStrValue("tw_language");
+   preferences.ui_font = DataManager::GetStrValue("aera_ui_font");
+   if (!ValidLanguage(preferences.language)) preferences.language = AERA_DEFAULT_LANGUAGE;

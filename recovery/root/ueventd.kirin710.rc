@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+/dev/graphics/* 0660 root graphics
+/dev/input/* 0660 root input
+/dev/uinput 0660 root input
+/dev/ion 0660 root system
+/dev/ts_aft_get_info 0600 root root
+/dev/ts_aft_set_info 0600 root root
+/dev/dsm 0660 root system

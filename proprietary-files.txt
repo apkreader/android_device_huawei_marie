@@ -1,0 +1,9 @@
+# EMUI 9.1.0.399, MAR-L21B C431
+system/lib64/libhwlog.so
+vendor/bin/aptouch_daemon
+vendor/firmware/ts/marie_synaptics_tcm_MARI69110.img
+vendor/lib64/libc_secshared.so
+vendor/odm/etc/firmware/ts/MARI691100_AFT_param.csv
+vendor/odm/etc/firmware/ts/libaftouch.so
+vendor/odm/etc/firmware/ts/libtsa.so
+vendor/odm/etc/firmware/ts/marie_synaptics_tcm_MARI69110_limits.csv

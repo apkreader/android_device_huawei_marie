@@ -1,0 +1,127 @@
+--- a/aeraui/build/aeraui_defaults.go
++++ b/aeraui/build/aeraui_defaults.go
+@@ -82,6 +82,10 @@
+ 			cflags = append(cflags, fmt.Sprintf("-D%s=%d", metric, parsed))
+ 		}
+ 	}
++	batteryPath := strings.Trim(getMakeVars(ctx, "AERA_CUSTOM_BATTERY_PATH"), "\"")
++	if batteryPath != "" {
++		cflags = append(cflags, "-DAERA_CUSTOM_BATTERY_PATH="+strconv.Quote(batteryPath))
++	}
+ 	cflags = append(cflags, aeraUiLanguageFlags(ctx)...)
+ 	return cflags
+ }
+--- /dev/null
++++ b/aeraui/platform/battery_sysfs.hpp
+@@ -0,0 +1,50 @@
++// SPDX-License-Identifier: Apache-2.0
++#pragma once
++#include <cstdio>
++#include <cstring>
++#include <string>
++
++namespace aeraui::battery_sysfs {
++// The native UI must use the same device path as the recovery backend.
++// root permits host fixtures without accessing the build host's battery.
++inline std::string Directory(const std::string &root = "") {
++  const char *paths[] = {
++#ifdef AERA_CUSTOM_BATTERY_PATH
++      AERA_CUSTOM_BATTERY_PATH,
++#endif
++      "/sys/class/power_supply/battery",
++      "/sys/class/power_supply/Battery",
++      "/sys/class/power_supply/bms",
++  };
++  for (const char *path : paths) {
++    const std::string directory = root + path;
++    FILE *file = fopen((directory + "/capacity").c_str(), "re");
++    if (!file) continue;
++    int capacity = -1;
++    const bool valid = fscanf(file, "%d", &capacity) == 1 && capacity >= 0 && capacity <= 100;
++    fclose(file);
++    if (valid) return directory;
++  }
++  return {};
++}
++inline long ReadNumber(const char *name, const std::string &root = "") {
++  const std::string directory = Directory(root);
++  if (directory.empty()) return -1;
++  FILE *file = fopen((directory + "/" + name).c_str(), "re");
++  if (!file) return -1;
++  long value = -1;
++  if (fscanf(file, "%ld", &value) != 1) value = -1;
++  fclose(file);
++  return value;
++}
++inline bool Charging(const std::string &root = "") {
++  const std::string directory = Directory(root);
++  if (directory.empty()) return false;
++  FILE *file = fopen((directory + "/status").c_str(), "re");
++  if (!file) return false;
++  char status[32] = {};
++  const bool read = fgets(status, sizeof(status), file) != nullptr;
++  fclose(file);
++  return read && (!strncmp(status, "Charging", 8) || !strncmp(status, "Full", 4));
++}
++}  // namespace aeraui::battery_sysfs
+--- a/aeraui/core/status_bar.cpp
++++ b/aeraui/core/status_bar.cpp
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include "aeraui/status_bar.hpp"
++#include "../platform/battery_sysfs.hpp"
+ 
+ #include <algorithm>
+ #include <cstdio>
+@@ -659,29 +660,11 @@
+ }
+ 
+ int ReadCapacity() {
+-  constexpr const char *kPaths[] = {
+-      "/sys/class/power_supply/battery/capacity",
+-      "/sys/class/power_supply/bms/capacity",
+-  };
+-  for (const char *path : kPaths) {
+-    FILE *file = fopen(path, "re");
+-    if (file == nullptr) continue;
+-    int capacity = -1;
+-    const int matched = fscanf(file, "%d", &capacity);
+-    fclose(file);
+-    if (matched == 1) return std::clamp(capacity, 0, 100);
+-  }
+-  return -1;
++  return static_cast<int>(battery_sysfs::ReadNumber("capacity"));
+ }
+ 
+ bool ReadCharging() {
+-  FILE *file = fopen("/sys/class/power_supply/battery/status", "re");
+-  if (file == nullptr) return false;
+-  char status[32] = {};
+-  const bool read = fgets(status, sizeof(status), file) != nullptr;
+-  fclose(file);
+-  return read && (strncmp(status, "Charging", 8) == 0 ||
+-                  strncmp(status, "Full", 4) == 0);
++  return battery_sysfs::Charging();
+ }
+ 
+ std::string FormatDownloadSpeed(uint64_t bytes_per_second) {
+--- a/aeraui/scenes/lock_scene.cpp
++++ b/aeraui/scenes/lock_scene.cpp
+@@ -1,5 +1,6 @@
+ /* SPDX-License-Identifier: Apache-2.0 */
+ #include "scene.hpp"
++#include "../platform/battery_sysfs.hpp"
+ #include "lock_credential.hpp"
+ #include <algorithm>
+ #include <array>
+@@ -75,8 +76,7 @@
+   return label;
+ }
+ long ReadNumber(const char *name) {
+-  std::ifstream file(std::string("/sys/class/power_supply/battery/") + name);
+-  long value = -1; file >> value; return value;
++  return battery_sysfs::ReadNumber(name);
+ }
+ void Stroke(LockState *s,int index,int ax,int ay,int bx,int by,int width,lv_color_t color) {
+   auto &stroke=s->strokes[index];

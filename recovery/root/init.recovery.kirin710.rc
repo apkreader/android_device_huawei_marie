@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: Apache-2.0
+import /init.recovery.kirin710.usb.rc
+
+on early-init
+    setprop sys.usb.configfs 1
+    setprop sys.usb.controller ff100000.dwc3
+
+on fs
+    exec u:r:recovery:s0 root root -- /system/bin/sh /system/bin/marie-block-links.sh
+
+# The appended stock recovery vendor ramdisk declares a critical OEM-info
+# daemon. It crashes under custom recovery and makes init reboot to fastboot
+# after four exits. Custom recovery does not need this vendor daemon.
+service oeminfo_nvm /system/bin/true
+    override
+    disabled
+    oneshot
+
+on boot
+    chmod 0660 /dev/graphics/fb0
+    chmod 0660 /sys/class/leds/lcd_backlight0/brightness
+    start marie-aptouch
+
+# Stock MAR firmware supplies this touch helper; it is not a crypto service.
+service marie-aptouch /vendor/bin/aptouch_daemon
+    class core
+    user root
+    group root system shell input wakelock
+    disabled
+    seclabel u:r:recovery:s0
+
+on property:odm.thp.service_enable=1
+    start marie-aptouch
+
+on property:odm.thp.service_enable=0
+    stop marie-aptouch

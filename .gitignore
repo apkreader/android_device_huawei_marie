@@ -1,0 +1,9 @@
+# Generated locally from matching proprietary Huawei firmware.
+/proprietary/
+/stock-blobs.mk
+/stock-blobs.json
+/prebuilt/empty-kernel
+/prebuilt/host-magiskboot
+/prebuilt/stock-recovery_ramdisk.img
+__pycache__/
+*.py[cod]

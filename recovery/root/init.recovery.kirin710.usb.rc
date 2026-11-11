@@ -1,0 +1,100 @@
+# Copyright (C) 2026 apkreader MAR recovery project
+# SPDX-License-Identifier: Apache-2.0
+# Huawei ConfigFS controller and gadget names verified on MAR-LX1B.
+# Sequence informed by AOSP USB init and Iceows' MAR recovery adaptation.
+
+on init
+    setprop sys.usb.controller ff100000.dwc3
+    setprop sys.usb.configfs 1
+
+on property:sys.usb.configfs=1
+    mount configfs none /config
+    mkdir /config/usb_gadget/g1
+    write /config/usb_gadget/g1/bcdDevice 0x0299
+    write /config/usb_gadget/g1/bcdUSB 0x0200
+    write /config/usb_gadget/g1/idVendor 0x12d1
+    write /config/usb_gadget/g1/idProduct 0x103a
+    mkdir /config/usb_gadget/g1/strings/0x409
+    write /config/usb_gadget/g1/strings/0x409/serialnumber ${ro.serialno}
+    write /config/usb_gadget/g1/strings/0x409/manufacturer HUAWEI
+    write /config/usb_gadget/g1/strings/0x409/product "MAR-LX1B AERA Recovery"
+    mkdir /config/usb_gadget/g1/configs/b.1
+    write /config/usb_gadget/g1/configs/b.1/MaxPower 500
+    write /config/usb_gadget/g1/configs/b.1/bmAttributes 0xc0
+    mkdir /config/usb_gadget/g1/configs/b.1/strings/0x409
+    mkdir /config/usb_gadget/g1/functions/ffs.adb
+    mkdir /config/usb_gadget/g1/functions/mtp.gs0
+    mkdir /config/usb_gadget/g1/os_desc
+    write /config/usb_gadget/g1/os_desc/b_vendor_code 0x1
+    write /config/usb_gadget/g1/os_desc/qw_sign MSFT100
+    symlink /config/usb_gadget/g1/configs/b.1 /config/usb_gadget/g1/os_desc/b.1
+    mkdir /dev/usb-ffs 0770 shell shell
+    mkdir /dev/usb-ffs/adb 0770 shell shell
+    mount functionfs adb /dev/usb-ffs/adb uid=2000,gid=2000
+
+on boot
+    setprop sys.usb.config adb
+
+on property:sys.usb.config=none && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/UDC none
+    stop adbd
+    setprop sys.usb.ffs.ready 0
+    rm /config/usb_gadget/g1/configs/b.1/f1
+    rm /config/usb_gadget/g1/configs/b.1/f2
+    write /config/usb_gadget/g1/os_desc/use 0
+    write /config/usb_gadget/g1/bDeviceClass 0
+    write /config/usb_gadget/g1/bDeviceSubClass 0
+    write /config/usb_gadget/g1/bDeviceProtocol 0
+    write /sys/devices/virtual/android_usb/android0/port_mode 1
+    setprop sys.usb.state none
+
+on property:init.svc.adbd=stopped
+    setprop sys.usb.ffs.ready 0
+
+on property:sys.usb.config=adb && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/UDC none
+    write /config/usb_gadget/g1/idProduct 0x103a
+    start adbd
+
+on property:sys.usb.ffs.ready=1 && property:sys.usb.config=adb && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/configs/b.1/strings/0x409/configuration adb
+    symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/b.1/f1
+    write /sys/devices/virtual/android_usb/android0/port_mode 2
+    write /config/usb_gadget/g1/UDC ${sys.usb.controller}
+    setprop sys.usb.state adb
+
+on property:sys.usb.config=sideload && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/UDC none
+    write /config/usb_gadget/g1/idProduct 0x103a
+    start adbd
+
+on property:sys.usb.ffs.ready=1 && property:sys.usb.config=sideload && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/configs/b.1/strings/0x409/configuration sideload
+    symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/b.1/f1
+    write /sys/devices/virtual/android_usb/android0/port_mode 2
+    write /config/usb_gadget/g1/UDC ${sys.usb.controller}
+    setprop sys.usb.state sideload
+
+on property:sys.usb.config=mtp && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/UDC none
+    write /config/usb_gadget/g1/idProduct 0x107e
+    write /config/usb_gadget/g1/os_desc/use 1
+    write /config/usb_gadget/g1/configs/b.1/strings/0x409/configuration mtp
+    symlink /config/usb_gadget/g1/functions/mtp.gs0 /config/usb_gadget/g1/configs/b.1/f1
+    write /sys/devices/virtual/android_usb/android0/port_mode 3
+    write /config/usb_gadget/g1/UDC ${sys.usb.controller}
+    setprop sys.usb.state mtp
+
+on property:sys.usb.config=mtp,adb && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/UDC none
+    write /config/usb_gadget/g1/idProduct 0x107e
+    write /config/usb_gadget/g1/os_desc/use 1
+    start adbd
+
+on property:sys.usb.ffs.ready=1 && property:sys.usb.config=mtp,adb && property:sys.usb.configfs=1
+    write /config/usb_gadget/g1/configs/b.1/strings/0x409/configuration mtp_adb
+    symlink /config/usb_gadget/g1/functions/mtp.gs0 /config/usb_gadget/g1/configs/b.1/f1
+    symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/b.1/f2
+    write /sys/devices/virtual/android_usb/android0/port_mode 4
+    write /config/usb_gadget/g1/UDC ${sys.usb.controller}
+    setprop sys.usb.state mtp,adb

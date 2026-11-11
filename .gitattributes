@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.img -text
+*.so -text
+*.bin -text
+*.patch -whitespace

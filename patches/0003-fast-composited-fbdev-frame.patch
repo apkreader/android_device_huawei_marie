@@ -1,0 +1,101 @@
+--- a/aeraui/core/engine.cpp
++++ b/aeraui/core/engine.cpp
+@@ -3949,6 +3949,16 @@
+     surface.stride = self->width_;
+     surface.data = pixels;
+     surface.format = GGL_PIXEL_FORMAT_BGRA_8888;
++
++    // The LVGL canvas is already composited. Present it as a complete frame
++    // without allocating a scaled surface or blending every pixel again.
++    if (lv_display_flush_is_last(display) && gr_blit_full_frame(&surface) == 0) {
++      gr_flip();
++      self->TrackSubmittedFrame();
++      recorder::CapturePresentedFrame();
++      lv_display_flush_ready(display);
++      return;
++    }
+ 
+     if (lv_display_flush_is_last(display)) {
+       gr_surface output = static_cast<gr_surface>(&surface);
+--- a/minuitwrp/include/minuitwrp/minui.h
++++ b/minuitwrp/include/minuitwrp/minui.h
+@@ -52,6 +52,8 @@
+ int gr_fb_height(void);
+ gr_pixel *gr_fb_data(void);
+ void gr_flip(void);
++// Copy/scale a fully composited BGRA frame; -1 requests the legacy fallback.
++int gr_blit_full_frame(gr_surface surface);
+ // Optical fingerprint frontends mark only frames containing the lit sensor.
+ void gr_set_fingerprint_pressed(bool pressed);
+ bool gr_fingerprint_pressed(void);
+--- a/minuitwrp/graphics.cpp
++++ b/minuitwrp/graphics.cpp
+@@ -39,6 +39,7 @@
+ #include "minuitwrp/placement.h"
+ #include "minuitwrp/minui.h"
+ #include "graphics.h"
++#include "minuitwrp/software_frame.hpp"
+ // For std::min and std::max
+ #include <algorithm>
+ #include <atomic>
+@@ -613,6 +614,17 @@
+     return ((GGLSurface*) surface)->height;
+ }
+ 
++int gr_blit_full_frame(gr_surface input) {
++    auto *surface = static_cast<GGLSurface *>(input);
++    if (!surface || !gr_draw || gr_rotation != 0 || overscan_offset_x || overscan_offset_y ||
++        surface->format != GGL_PIXEL_FORMAT_BGRA_8888 ||
++        gr_draw->format != GGL_PIXEL_FORMAT_BGRA_8888 || gr_draw->pixel_bytes != 4)
++        return -1;
++    return minui_software_frame::Copy(
++        surface->data, surface->width, surface->height, surface->stride * 4,
++        gr_draw->data, gr_draw->width, gr_draw->height, gr_draw->row_bytes) ? 0 : -1;
++}
++
+ void gr_flip() {
+     gr_draw = gr_backend->flip(gr_backend);
+     // On double buffered back ends, when we flip, we need to tell
+--- /dev/null
++++ b/minuitwrp/include/minuitwrp/software_frame.hpp
+@@ -0,0 +1,40 @@
++// SPDX-License-Identifier: Apache-2.0
++#pragma once
++#include <cstddef>
++#include <cstdint>
++#include <cstring>
++#include <limits>
++#include <vector>
++
++namespace minui_software_frame {
++inline bool Copy(const uint8_t *source, int sw, int sh, size_t source_stride,
++                 uint8_t *destination, int dw, int dh, size_t destination_stride) {
++  if (!source || !destination || sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0 ||
++      static_cast<size_t>(sw) > SIZE_MAX / 4 || static_cast<size_t>(dw) > SIZE_MAX / 4 ||
++      source_stride < static_cast<size_t>(sw) * 4 || destination_stride < static_cast<size_t>(dw) * 4 ||
++      source_stride > SIZE_MAX / static_cast<size_t>(sh) ||
++      destination_stride > SIZE_MAX / static_cast<size_t>(dh)) return false;
++  // Retain the map between frames: no framebuffer-sized allocations or
++  // per-pixel divides in the presentation loop.
++  static thread_local std::vector<size_t> columns;
++  static thread_local int previous_sw = 0, previous_dw = 0;
++  if (sw != dw && (previous_sw != sw || previous_dw != dw)) {
++    columns.resize(dw);
++    for (int x = 0; x < dw; ++x)
++      columns[x] = static_cast<size_t>(static_cast<int64_t>(x) * sw / dw) * 4;
++    previous_sw = sw; previous_dw = dw;
++  }
++  for (int y = 0; y < dh; ++y) {
++    const size_t sy = static_cast<size_t>(static_cast<int64_t>(y) * sh / dh);
++    const uint8_t *row = source + sy * source_stride;
++    uint8_t *output = destination + static_cast<size_t>(y) * destination_stride;
++    if (sw == dw) {
++      std::memcpy(output, row, static_cast<size_t>(dw) * 4);
++    } else {
++      for (int x = 0; x < dw; ++x)
++        std::memcpy(output + static_cast<size_t>(x) * 4, row + columns[x], 4);
++    }
++  }
++  return true;
++}
++}  // namespace minui_software_frame
