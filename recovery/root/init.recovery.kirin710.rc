@@ -6,7 +6,6 @@ import /init.recovery.marie.crypto.rc
 
 on early-init
     setprop ro.aera.ui.status_cutout_width 240
-    setprop ro.aera.ui.bottom_inset 64
     setprop sys.usb.configfs 1
     setprop sys.usb.controller ff100000.dwc3
 
