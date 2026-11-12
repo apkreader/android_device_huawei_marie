@@ -33,12 +33,13 @@ Working in device tests:
 - Automatic FBE unlock without a screen lock.
 - FBE decryption with a pattern, PIN, or password.
 - Wipe and backup from the UI.
+- ADB sideload.
 
 Known limitation: WPA3 is not enabled by the current Wi-Fi driver.
 
 Untested:
 
-- MTP and ADB sideload.
+- MTP.
 - MicroSD.
 - Restore and flashing from the UI.
 - Installation to eRecovery.
