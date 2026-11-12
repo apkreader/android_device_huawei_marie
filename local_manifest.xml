@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest>
+    <remote name="apkreader" fetch="https://github.com/apkreader/" />
+    <project name="android_device_huawei_marie" path="device/huawei/marie" remote="apkreader" revision="lineage-24.0" />
+    <project name="android_vendor_huawei_marie" path="vendor/huawei/marie" remote="apkreader" revision="lineage-24.0" />
+    <project name="android_kernel_huawei_kirin710" path="kernel/huawei/kirin710" remote="apkreader" revision="lineage-24.0" />
+</manifest>

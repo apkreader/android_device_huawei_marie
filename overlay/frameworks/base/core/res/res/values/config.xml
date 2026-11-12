@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 apkreader
+     SPDX-License-Identifier: Apache-2.0 -->
+<resources>
+    <bool name="config_showNavigationBar">true</bool>
+    <!-- Stock notch bounds: 118 x 81 pixels, starting at x=481. -->
+    <string name="config_mainBuiltInDisplayCutout" translatable="false">M -59,0 L -59,81 L 59,81 L 59,0 Z</string>
+    <bool name="config_fillMainBuiltInDisplayCutout">false</bool>
+</resources>
