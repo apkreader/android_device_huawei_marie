@@ -9,7 +9,7 @@
  #include <openssl/sha.h>
  #include <sys/ioctl.h>
  
-@@ -128,6 +130,33 @@
+@@ -128,6 +130,39 @@
      }
  }
  
@@ -23,6 +23,12 @@
 +        ring = add_key("keyring", "e4crypt", nullptr, 0, KEY_SPEC_SESSION_KEYRING);
 +    if (ring < 0) {
 +        PLOG(ERROR) << "Cannot open legacy filesystem keyring";
++        return false;
++    }
++    // Workers may have started with a different session keyring.
++    if (keyctl_search(KEY_SPEC_SESSION_KEYRING, "keyring", "e4crypt",
++                      KEY_SPEC_USER_KEYRING) < 0) {
++        PLOG(ERROR) << "Cannot share legacy filesystem keyring";
 +        return false;
 +    }
 +    KeyBuffer buffer(sizeof(fscrypt_key), 0);
@@ -43,7 +49,7 @@
  bool installKey(const std::string& mountpoint, const EncryptionOptions& options,
                  const KeyBuffer& key, EncryptionPolicy* policy) {
      const std::lock_guard<std::mutex> lock(fscrypt_keyring_mutex);
-@@ -151,9 +180,6 @@
+@@ -151,9 +186,6 @@
              } else {
                  policy->key_raw_ref = generateKeyRef((const uint8_t*)key.data(), key.size());
              }
@@ -53,7 +59,7 @@
              if (!buildKeySpecifier(&arg->key_spec, *policy)) {
                  return false;
              }
-@@ -183,6 +209,10 @@
+@@ -183,6 +215,10 @@
      }
  
      if (ioctl(fd, FS_IOC_ADD_ENCRYPTION_KEY, arg) != 0) {
@@ -64,7 +70,7 @@
          PLOG(ERROR) << "Failed to install fscrypt key to " << mountpoint;
          return false;
      }
-@@ -255,6 +285,22 @@
+@@ -255,6 +291,22 @@
                 << " were not locked!";
  }
  
@@ -87,7 +93,7 @@
  bool evictKey(const std::string& mountpoint, const EncryptionPolicy& policy) {
      const std::lock_guard<std::mutex> lock(fscrypt_keyring_mutex);
  
-@@ -274,6 +320,10 @@
+@@ -274,6 +326,10 @@
      std::string ref = keyrefstring(policy.key_raw_ref);
  
      if (ioctl(fd, FS_IOC_REMOVE_ENCRYPTION_KEY, &arg) != 0) {
