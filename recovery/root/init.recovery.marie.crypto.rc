@@ -1,6 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 on early-init
     setprop ro.aera.crypto.wait_for_keystore true
+    setprop ro.aera.crypto.legacy_keystore true
+
+on init
+    mkdir /sec_storage 0600 root root
+    mount ext4 /dev/block/by-name/secure_storage /sec_storage nosuid nodev noatime wait discard,auto_da_alloc,data=journal,context=u:object_r:teecd_data_file:s0
 
 on boot
     stop teecd
@@ -22,6 +27,7 @@ service marie-crypto-init /system/bin/sh /system/bin/marie-crypto-init.sh
     user root
     group root
     seclabel u:r:recovery:s0
+
 service servicemanager /system/bin/servicemanager
     override
     disabled
@@ -51,6 +57,7 @@ service marie-gatekeeper /system/bin/marie_crypto_service gatekeeper
     interface android.hardware.gatekeeper@1.0::IGatekeeper default
 
 service keystore2 /system/bin/keystore2 /tmp/misc/keystore
+    setenv AERA_LEGACY_LOCKSETTINGS_KEYS 1
     override
     disabled
     user root

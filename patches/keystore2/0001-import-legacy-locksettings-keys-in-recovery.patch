@@ -1,0 +1,11 @@
+--- a/keystore2/src/legacy_importer.rs
++++ b/keystore2/src/legacy_importer.rs
+@@ -317,6 +317,8 @@
+             KeyDescriptor { domain: Domain::SELINUX, nspace, alias: Some(_), .. } => {
+                 match *nspace {
+                     Self::WIFI_NAMESPACE => Self::AID_WIFI,
++                    103 if std::env::var("AERA_LEGACY_LOCKSETTINGS_KEYS").as_deref()
++                        == Ok("1") => rustutils::users::AID_SYSTEM,
+                     _ => {
+                         return Err(Error::Rc(ResponseCode::KEY_NOT_FOUND))
+                             .context(format!("No legacy keys for namespace {}", nspace))

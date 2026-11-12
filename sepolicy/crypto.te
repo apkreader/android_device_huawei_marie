@@ -1,6 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 # These services and bundled libraries run only in recovery.
+type marie_rpmb_device, dev_type;
+
 recovery_only(`
+# The Huawei RPMB agent opens this UFS device from a kernel thread.
+allow kernel marie_rpmb_device:chr_file { getattr open read write ioctl };
+# Preserve the stock TEE storage labels used by the installed EMUI filesystem.
+type teecd_data_file, file_type, data_file_type;
+type teecd_data_file_vendor, file_type, data_file_type;
+allow teecd_data_file self:filesystem associate;
+allow init teecd_data_file:filesystem { mount relabelto relabelfrom };
+allow init teecd_data_file:dir mounton;
+allow tee { teecd_data_file teecd_data_file_vendor }:dir create_dir_perms;
+allow tee { teecd_data_file teecd_data_file_vendor }:file create_file_perms;
 # The Huawei Android 9 TEE agent requires executable mappings and verifies the
 # calling HAL process context before passing its client device handle.
 allow tee self:process execmem;

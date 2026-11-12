@@ -30,15 +30,16 @@ Working in device tests:
 - Boot animation without the mid-animation screen interruption.
 - Wi-Fi driver initialization, scanning, WPA2 connection, and DHCP.
 - Automatic FBE unlock without a screen lock.
+- FBE decryption with a pattern, PIN, or password.
+- Wipe and backup from the UI.
 
 Known limitation: WPA3 is not enabled by the current Wi-Fi driver.
 
 Untested:
 
-- PIN/password-protected FBE decryption.
 - MTP and ADB sideload.
 - MicroSD.
-- Backup, restore, and flashing from the UI.
+- Restore and flashing from the UI.
 - Installation to eRecovery.
 
 Rendering uses the software framebuffer with ARM64 NEON blending. Interface density defaults to **Spacious** and can be changed
@@ -78,6 +79,10 @@ done
 
 for patch in "$PWD"/device/huawei/marie/patches/vold/*.patch; do
     git -C system/vold apply "$patch"
+done
+
+for patch in "$PWD"/device/huawei/marie/patches/keystore2/*.patch; do
+    git -C system/security apply "$patch"
 done
 
 source build/envsetup.sh
