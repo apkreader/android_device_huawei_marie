@@ -1,0 +1,42 @@
+--- a/aera_build.mk
++++ b/aera_build.mk
+@@ -918,15 +918,20 @@
+ 
+     $(warning The wlan features will be enabled. You need to provide (and load and manage) your WiFi drivers in your device tree)
+ 
++    ifneq ($(AERA_WPA_SUPPLICANT_MODULE),)
++        TWRP_REQUIRED_MODULES += $(AERA_WPA_SUPPLICANT_MODULE)
++        RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_VENDOR_EXECUTABLES)/$(AERA_WPA_SUPPLICANT_MODULE)
++    else
++        TWRP_REQUIRED_MODULES += wpa_supplicant android.hardware.wifi.supplicant.xml
++        RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_VENDOR_EXECUTABLES)/hw/wpa_supplicant
++    endif
++
+     TWRP_REQUIRED_MODULES += \
+-        wpa_supplicant \
+-        android.hardware.wifi.supplicant.xml \
+         wpa_cli \
+         dhcptool \
+         aera-netfs \
+         fusermount3
+ 
+-    RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_VENDOR_EXECUTABLES)/hw/wpa_supplicant
+     RECOVERY_BINARY_SOURCE_FILES += $(TARGET_OUT_VENDOR_EXECUTABLES)/wpa_cli
+     # AOSP 16 provides a recovery-specific dhcptool module. Requiring that
+     # module installs the real binary at the exact path wlan.cpp executes.
+@@ -936,6 +941,7 @@
+     RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.wifi.common-V2-ndk.so
+     RECOVERY_LIBRARY_SOURCE_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.wifi.supplicant-V4-ndk.so
+ 
++ifeq ($(AERA_WPA_SUPPLICANT_MODULE),)
+     WIFI_SUPP_VINTF := vendor/etc/vintf/manifest/android.hardware.wifi.supplicant.xml
+ 
+ ifndef OF_WIFI_SUPP_VINTF_RULE_DEFINED
+@@ -945,6 +951,7 @@
+ 	@mkdir -p $(dir $@) && cp -f $< $@
+ 
+ ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_RECOVERY_ROOT_OUT)/$(WIFI_SUPP_VINTF)
++endif
+ endif
+ 
+ endif

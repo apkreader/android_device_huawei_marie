@@ -68,13 +68,18 @@ for patch in "$PWD"/device/huawei/marie/patches/lvgl/*.patch; do
     git -C external/lvgl apply "$patch"
 done
 
+for patch in "$PWD"/device/huawei/marie/patches/wpa_supplicant/*.patch; do
+    git -C external/wpa_supplicant_8 apply "$patch"
+done
+
 source build/envsetup.sh
 lunch twrp_marie-bp2a-eng
 m -j"$(nproc)" recoveryimage
 ```
 
 Apply the patches once to a clean recovery checkout. The current patches target
-recovery commit `42ed6b66808200ce0d388bb0b4f05e4c2af4d207`.
+recovery commit `42ed6b66808200ce0d388bb0b4f05e4c2af4d207` and supplicant
+commit `3ef7b491990ee71f3cbad5c70b274430fa8d5c13`.
 
 Output: `out/target/product/marie/recovery.img`.
 

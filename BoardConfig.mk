@@ -99,3 +99,5 @@ AERA_ENABLE_ROOT_MANAGER := 0
 # Huawei's proprietary touch helper is staged from matching stock firmware.
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 BUILD_BROKEN_PLUGIN_VALIDATION := soong-libaosprecovery_defaults soong-libguitwrp_defaults soong-libminuitwrp_defaults soong-vold_defaults
+
+AERA_WPA_SUPPLICANT_MODULE := wpa_supplicant_recovery

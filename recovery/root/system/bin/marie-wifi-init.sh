@@ -18,10 +18,13 @@ mkdir -p /vendor/etc/wifi /vendor/firmware /tmp/recovery/sockets
 chmod 0755 /tmp/recovery
 chown 1010:1010 /tmp/recovery/sockets
 chmod 0770 /tmp/recovery/sockets
-cp "$stock/${ini#/vendor/}" "$ini"
-cp /system/etc/wifi/wpa_supplicant.conf /vendor/etc/wifi/wpa_supplicant.conf
+if [ ! "$stock/${ini#/vendor/}" -ef "$ini" ]; then
+    cp "$stock/${ini#/vendor/}" "$ini"
+fi
 for firmware in wifi_cfg bfgx_cfg bfgx_and_wifi_cfg cr4_asic.bin CPU_RAM_SCHED.bin CPU_RAM_WBS.bin; do
-    cp "$stock/firmware/$firmware" "/vendor/firmware/$firmware"
+    if [ ! "$stock/firmware/$firmware" -ef "/vendor/firmware/$firmware" ]; then
+        cp "$stock/firmware/$firmware" "/vendor/firmware/$firmware"
+    fi
 done
 
 # The stock recovery initializes NVE before connectivity. Wi-Fi reads its

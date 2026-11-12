@@ -1,0 +1,27 @@
+--- a/wpa_supplicant/Android.bp
++++ b/wpa_supplicant/Android.bp
+@@ -1541,3 +1541,24 @@
+     src: ":com.android.hardware.wpa_supplicant.rc-gen",
+     installable: false,
+ }
++
++// Recovery uses the UNIX control socket without publishing an Android HAL.
++cc_binary {
++    name: "wpa_supplicant_recovery",
++    proprietary: true,
++    defaults: [
++        "wpa_supplicant_srcs_default",
++        "wpa_supplicant_no_aidl_cflags_default",
++        "wpa_supplicant_includes_default",
++        "wpa_supplicant_usd_defaults",
++    ],
++    shared_libs: [
++        "libc",
++        "libcrypto",
++        "libcutils",
++        "libkeystore-engine-wifi-hidl",
++        "liblog",
++        "libnl",
++        "libssl",
++    ],
++}
