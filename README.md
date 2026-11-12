@@ -24,6 +24,7 @@ Working in device tests:
 
 - AERA boots with root ADB.
 - Display scaling and brightness.
+- Flashlight.
 - Battery percentage and charging indicator.
 - Power and volume buttons.
 - Touch on boot and after waking the screen.

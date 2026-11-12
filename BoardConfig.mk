@@ -93,6 +93,7 @@ AERA_BRIGHTNESS_PATH := /sys/class/leds/lcd_backlight0/brightness
 AERA_MAX_BRIGHTNESS := 7350
 AERA_DEFAULT_BRIGHTNESS := 2205
 AERA_CUSTOM_BATTERY_PATH := /sys/class/power_supply/Battery
+AERA_FL_PATH1 := /sys/class/leds/torch
 AERA_NO_HAPTICS := true
 AERA_ENABLE_WLAN := 1
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
