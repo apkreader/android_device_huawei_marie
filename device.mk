@@ -44,6 +44,8 @@ include $(DEVICE_PATH)/stock-blobs.mk
 
 PRODUCT_PACKAGES += marie_crypto_service
 PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/prebuilt/busybox:recovery/root/system/bin/busybox
+PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/recovery/root/init.recovery.marie.crypto.rc:recovery/root/init.recovery.marie.crypto.rc \
     $(DEVICE_PATH)/recovery/root/system/bin/marie-crypto-init.sh:recovery/root/system/bin/marie-crypto-init.sh
 

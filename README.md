@@ -103,14 +103,15 @@ Keep the listed paths under a local directory. The `vendor/odm/` entries may
 also be supplied under `odm/`. Crypto and Wi-Fi files are checked against their
 listed SHA-256 hashes.
 
-Prepare the tree with the stock recovery ramdisk and the x86_64 MagiskBoot
-binary from the official Magisk 31.1 APK:
+Prepare the tree with the stock recovery ramdisk, x86_64 MagiskBoot, and ARM64
+BusyBox from the official Magisk APK:
 
 ```bash
 python3 device/huawei/marie/tools/setup-vendor.py \
     --blobs /path/to/stock-files \
     --recovery-ramdisk /path/to/stock-recovery_ramdisk.img \
-    --magiskboot /path/to/Magisk-31.1/lib/x86_64/libmagiskboot.so
+    --magiskboot /path/to/Magisk/lib/x86_64/libmagiskboot.so \
+    --busybox /path/to/Magisk/lib/arm64-v8a/libbusybox.so
 ```
 
 This generates the blob makefiles, `stock-blobs.json`, `proprietary/`, and the
@@ -140,4 +141,6 @@ unlocked bootloader. It does not carry a new Huawei signature.
 
 Device configuration and scripts are licensed under Apache-2.0. Huawei binaries
 remain proprietary. MagiskBoot is GPL-3.0; its license is in
-[`prebuilt/Magisk-LICENSE`](prebuilt/Magisk-LICENSE).
+[`prebuilt/Magisk-LICENSE`](prebuilt/Magisk-LICENSE). BusyBox is GPL-2.0;
+see [`prebuilt/BusyBox-LICENSE`](prebuilt/BusyBox-LICENSE) and its
+[source](https://github.com/topjohnwu/ndk-busybox).

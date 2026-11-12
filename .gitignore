@@ -4,6 +4,7 @@
 /stock-blobs.json
 /prebuilt/empty-kernel
 /prebuilt/host-magiskboot
+/prebuilt/busybox
 /prebuilt/stock-recovery_ramdisk.img
 __pycache__/
 *.py[cod]

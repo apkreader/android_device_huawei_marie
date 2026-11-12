@@ -159,7 +159,7 @@ def pack(cpio, bootstrap, output):
     packed = sorted(name for name, entry in entries.items()
         if stat.S_ISREG(entry.mode) and name not in bootstrap and
         (name.startswith(('system/lib64/', 'crypto/', 'twres/fonts/')) or
-         name in {'system/bin/recovery.bin', 'system/bin/keystore2'}))
+         name in {'system/bin/recovery.bin', 'system/bin/keystore2', 'system/bin/busybox'}))
     if 'system/bin/recovery.bin' not in packed or 'system/bin/keystore2' not in packed:
         raise ValueError('Full recovery and crypto build input is required')
     if any(entries[name].links != 1 for name in packed):

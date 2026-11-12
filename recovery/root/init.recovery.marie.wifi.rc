@@ -2,9 +2,6 @@
 on early-init
     setprop wifi.interface wlan0
 
-on boot
-    write /proc/sys/net/ipv4/ping_group_range "0 2147483647"
-
 on property:sys.aera.wlan.up=1
     setprop sys.aera.wlan.driver_ready 0
     exec_start marie-wifi-init

@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--blobs', type=Path, required=True)
     parser.add_argument('--recovery-ramdisk', type=Path, required=True)
     parser.add_argument('--magiskboot', type=Path, required=True)
+    parser.add_argument('--busybox', type=Path, required=True)
     parser.add_argument('--output', type=Path, default=tree)
     args = parser.parse_args()
     donor = args.recovery_ramdisk.read_bytes()
@@ -26,6 +27,9 @@ def main():
     host = args.magiskboot.read_bytes()
     if host[:6] != b'\x7fELF\x02\x01' or struct.unpack_from('<H', host, 18)[0] != 62:
         parser.error('MagiskBoot must be the Linux x86_64 ELF binary.')
+    busybox = args.busybox.read_bytes()
+    if busybox[:6] != b'\x7fELF\x02\x01' or struct.unpack_from('<H', busybox, 18)[0] != 183:
+        parser.error('BusyBox must be an ARM64 ELF binary.')
 
     files = [line.strip() for line in (tree/'proprietary-files.txt').read_text().splitlines()
              if line.strip() and not line.startswith('#')]
@@ -93,6 +97,8 @@ def main():
     (prebuilt/'stock-recovery_ramdisk.img').write_bytes(donor)
     (prebuilt/'host-magiskboot').write_bytes(host)
     (prebuilt/'host-magiskboot').chmod(0o755)
+    (prebuilt/'busybox').write_bytes(busybox)
+    (prebuilt/'busybox').chmod(0o755)
     (args.output/'proprietary/vendor/bin/aptouch_daemon').chmod(0o755)
     print('Prepared '+str(len(records))+' stock files and recovery build inputs.')
 
