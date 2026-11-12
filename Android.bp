@@ -1,3 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 soong_namespace {
 }
+
+cc_binary {
+    name: "marie_crypto_service",
+    recovery: true,
+    srcs: ["crypto/service.c"],
+    static_executable: true,
+    stl: "none",
+    c_std: "gnu11",
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}

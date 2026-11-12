@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# These services and bundled libraries run only in recovery.
+recovery_only(`
+# The Huawei Android 9 TEE agent requires executable mappings and verifies the
+# calling HAL process context before passing its client device handle.
+allow tee self:process execmem;
+# The stock linker receives its executable descriptor from the recovery launcher.
+allow { hal_keymaster_default hal_gatekeeper_default } recovery:fd use;
+allow tee { hal_keymaster_default hal_gatekeeper_default }:dir { search read open getattr };
+allow tee { hal_keymaster_default hal_gatekeeper_default }:file { read open getattr };
+allow tee { hal_keymaster_default hal_gatekeeper_default }:process getattr;
+allow { hal_keymaster_default hal_gatekeeper_default } tee:unix_stream_socket connectto;
+allow { hal_keymaster_default hal_gatekeeper_default } tee:fd use;
+allow { hal_keymaster_default hal_gatekeeper_default } tee_device:chr_file { read write open getattr ioctl };
+allow { hal_keymaster_default hal_gatekeeper_default } default_prop:file { read open getattr map };
+# The launcher clears inherited variables and supplies only the stock library
+# path; the stock linker must retain it across this service transition.
+allow recovery { hal_keymaster_default hal_gatekeeper_default }:process noatsecure;
+')

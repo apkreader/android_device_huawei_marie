@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: Apache-2.0
+on early-init
+    setprop ro.aera.crypto.wait_for_keystore true
+
+on boot
+    stop teecd
+    exec_start marie-crypto-init
+    start servicemanager
+    start hwservicemanager
+    start teecd
+
+on property:hwservicemanager.ready=true && property:sys.aera.crypto.ready=1
+    start marie-keymaster
+    start marie-gatekeeper
+
+on property:init.svc.marie-keymaster=running && property:init.svc.marie-gatekeeper=running
+    start keystore2
+
+service marie-crypto-init /system/bin/sh /system/bin/marie-crypto-init.sh
+    disabled
+    oneshot
+    user root
+    group root
+    seclabel u:r:recovery:s0
+service servicemanager /system/bin/servicemanager
+    override
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+
+service hwservicemanager /system/bin/hwservicemanager
+    override
+    disabled
+    user root
+    group root
+    seclabel u:r:hwservicemanager:s0
+
+service marie-keymaster /system/bin/marie_crypto_service keymaster
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+    interface android.hardware.keymaster@3.0::IKeymasterDevice default
+
+service marie-gatekeeper /system/bin/marie_crypto_service gatekeeper
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+    interface android.hardware.gatekeeper@1.0::IGatekeeper default
+
+service keystore2 /system/bin/keystore2 /tmp/misc/keystore
+    override
+    disabled
+    user root
+    group root keystore readproc log
+    seclabel u:r:recovery:s0

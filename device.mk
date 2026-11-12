@@ -3,6 +3,7 @@
 DEVICE_PATH := device/huawei/marie
 PRODUCT_SOONG_NAMESPACES += $(DEVICE_PATH)
 PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false
+PRODUCT_SHIPPING_API_LEVEL := 28
 
 PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/recovery/root/init.recovery.marie.wifi.rc:recovery/root/init.recovery.marie.wifi.rc \
@@ -40,3 +41,17 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 # Generated from stock recovery ramdisks, with SHA-256 provenance.
 include $(DEVICE_PATH)/stock-blobs.mk
+
+PRODUCT_PACKAGES += marie_crypto_service
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/recovery/root/init.recovery.marie.crypto.rc:recovery/root/init.recovery.marie.crypto.rc \
+    $(DEVICE_PATH)/recovery/root/system/bin/marie-crypto-init.sh:recovery/root/system/bin/marie-crypto-init.sh
+
+include $(DEVICE_PATH)/crypto-blobs.mk
+PRODUCT_COPY_FILES += $(DEVICE_PATH)/recovery/root/crypto/system/system/etc/ld.config.txt:recovery/root/crypto/system/system/etc/ld.config.txt
+
+include $(DEVICE_PATH)/wifi-blobs.mk
+
+PRODUCT_COPY_FILES += \
+    $(DEVICE_PATH)/recovery/root/init.recovery.marie.runtime.rc:recovery/root/init.recovery.marie.runtime.rc \
+    $(DEVICE_PATH)/recovery/root/system/bin/marie-unpack-runtime.sh:recovery/root/system/bin/marie-unpack-runtime.sh

@@ -7,3 +7,6 @@
 /prebuilt/stock-recovery_ramdisk.img
 __pycache__/
 *.py[cod]
+
+/crypto-blobs.mk
+/wifi-blobs.mk

@@ -1,2 +1,4 @@
-<manifest version="9.0" type="framework">
+<manifest version="1.0" type="framework">
+    <hal format="hidl"><name>android.hidl.manager</name><transport>hwbinder</transport><version>1.2</version><interface><name>IServiceManager</name><instance>default</instance></interface></hal>
+    <hal format="aidl"><name>android.system.keystore2</name><version>5</version><interface><name>IKeystoreService</name><instance>default</instance></interface></hal>
 </manifest>

@@ -1,0 +1,100 @@
+--- a/KeyUtil.cpp
++++ b/KeyUtil.cpp
+@@ -23,6 +23,8 @@
+ 
+ #include <fcntl.h>
+ #include <linux/fscrypt.h>
++#include <keyutils.h>
++#include <errno.h>
+ #include <openssl/sha.h>
+ #include <sys/ioctl.h>
+ 
+@@ -128,6 +130,33 @@
+     }
+ }
+ 
++static bool installKeyLegacy(const KeyBuffer& key, const std::string& raw_ref) {
++    if (key.size() != 64) {
++        LOG(ERROR) << "Legacy keyring requires a 64-byte AES-XTS key";
++        return false;
++    }
++    key_serial_t ring = keyctl_search(KEY_SPEC_SESSION_KEYRING, "keyring", "e4crypt", 0);
++    if (ring < 0 && errno == ENOKEY)
++        ring = add_key("keyring", "e4crypt", nullptr, 0, KEY_SPEC_SESSION_KEYRING);
++    if (ring < 0) {
++        PLOG(ERROR) << "Cannot open legacy filesystem keyring";
++        return false;
++    }
++    KeyBuffer buffer(sizeof(fscrypt_key), 0);
++    auto* payload = reinterpret_cast<fscrypt_key*>(buffer.data());
++    payload->mode = FSCRYPT_MODE_AES_256_XTS;
++    payload->size = key.size();
++    memcpy(payload->raw, key.data(), key.size());
++    for (const char* prefix : {"ext4", "f2fs", "fscrypt"}) {
++        const std::string name = std::string(prefix) + ":" + keyrefstring(raw_ref);
++        if (add_key("logon", name.c_str(), buffer.data(), buffer.size(), ring) < 0) {
++            PLOG(ERROR) << "Cannot install legacy filesystem key";
++            return false;
++        }
++    }
++    return true;
++}
++
+ bool installKey(const std::string& mountpoint, const EncryptionOptions& options,
+                 const KeyBuffer& key, EncryptionPolicy* policy) {
+     const std::lock_guard<std::mutex> lock(fscrypt_keyring_mutex);
+@@ -151,9 +180,6 @@
+             } else {
+                 policy->key_raw_ref = generateKeyRef((const uint8_t*)key.data(), key.size());
+             }
+-//            if (!isFsKeyringSupported()) {
+-//                return installKeyLegacy(key, policy->key_raw_ref);
+-//            }
+             if (!buildKeySpecifier(&arg->key_spec, *policy)) {
+                 return false;
+             }
+@@ -183,6 +209,10 @@
+     }
+ 
+     if (ioctl(fd, FS_IOC_ADD_ENCRYPTION_KEY, arg) != 0) {
++        if ((errno == ENOTTY || errno == EOPNOTSUPP) && options.version == 1 &&
++            !options.use_hw_wrapped_key) {
++            return installKeyLegacy(key, policy->key_raw_ref);
++        }
+         PLOG(ERROR) << "Failed to install fscrypt key to " << mountpoint;
+         return false;
+     }
+@@ -255,6 +285,22 @@
+                << " were not locked!";
+ }
+ 
++static bool evictKeyLegacy(const std::string& raw_ref) {
++    key_serial_t ring = keyctl_search(KEY_SPEC_SESSION_KEYRING, "keyring", "e4crypt", 0);
++    if (ring < 0) return errno == ENOKEY;
++    bool success = true;
++    for (const char* prefix : {"ext4", "f2fs", "fscrypt"}) {
++        const std::string name = std::string(prefix) + ":" + keyrefstring(raw_ref);
++        key_serial_t key = keyctl_search(ring, "logon", name.c_str(), 0);
++        if (key < 0 && errno == ENOKEY) continue;
++        if (key < 0 || keyctl_unlink(key, ring) < 0) {
++            PLOG(ERROR) << "Cannot remove legacy filesystem key";
++            success = false;
++        }
++    }
++    return success;
++}
++
+ bool evictKey(const std::string& mountpoint, const EncryptionPolicy& policy) {
+     const std::lock_guard<std::mutex> lock(fscrypt_keyring_mutex);
+ 
+@@ -274,6 +320,10 @@
+     std::string ref = keyrefstring(policy.key_raw_ref);
+ 
+     if (ioctl(fd, FS_IOC_REMOVE_ENCRYPTION_KEY, &arg) != 0) {
++        if ((errno == ENOTTY || errno == EOPNOTSUPP) && policy.options.version == 1 &&
++            !policy.options.use_hw_wrapped_key) {
++            return evictKeyLegacy(policy.key_raw_ref);
++        }
+         PLOG(ERROR) << "Failed to evict fscrypt key with ref " << ref << " from " << mountpoint;
+         return false;
+     }

@@ -1,0 +1,4 @@
+dir.crypto = /vendor/bin/hw
+[crypto]
+namespace.default.isolated = false
+namespace.default.search.paths = /vendor/lib64:/system/lib64/vndk-28:/system/lib64/vndk-sp-28:/system/lib64

@@ -73,7 +73,11 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_ROOT_EXTRA_FOLDERS := hw_odm splash2 sec_storage version cust preload
 
-# Crypto configuration is WIP.
+# EMUI 9 uses fscrypt v1 policies.
+AERA_INCLUDE_CRYPTO := true
+AERA_INCLUDE_CRYPTO_FBE := true
+AERA_USE_FSCRYPT_POLICY := 1
+$(call soong_config_set,makeVarsPlugin,TW_USE_FSCRYPT_POLICY,$(AERA_USE_FSCRYPT_POLICY))
 AERA_SKIP_ADDITIONAL_FSTAB := true
 AERA_EXCLUDE_DEFAULT_USB_INIT := true
 # AERA pages use fixed 1440-wide design metrics. Scale the complete canvas to
@@ -101,3 +105,6 @@ BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 BUILD_BROKEN_PLUGIN_VALIDATION := soong-libaosprecovery_defaults soong-libguitwrp_defaults soong-libminuitwrp_defaults soong-vold_defaults
 
 AERA_WPA_SUPPLICANT_MODULE := wpa_supplicant_recovery
+
+# Recovery-only permissions for the stock crypto services.
+BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy

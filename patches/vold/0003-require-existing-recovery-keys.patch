@@ -1,0 +1,24 @@
+--- a/FsCrypt.cpp
++++ b/FsCrypt.cpp
+@@ -561,7 +561,7 @@
+     KeyBuffer device_key;
+ install:
+     if (!retrieveOrGenerateKey(device_key_path, device_key_temp, kEmptyAuthentication,
+-                               makeGen(s_data_options), &device_key))
++                               android::vold::neverGen(), &device_key))
+         return false;
+ 
+     // This initializes s_device_policy, which is a global variable so that
+@@ -671,8 +671,10 @@
+         // Create user 0's DE and CE keys if they don't already exist.  Check
+         // each key independently, since if the first boot was interrupted it is
+         // possible that the DE key exists but the CE key does not.
+-        if (!de_key_exists(0) && !create_de_key(0, false)) return false;
+-        if (!ce_key_exists(0) && !create_ce_key(0, false)) return false;
++        if (!de_key_exists(0) || !ce_key_exists(0)) {
++            LOG(ERROR) << "Existing user 0 encryption keys are required in recovery";
++            return false;
++        }
+ 
+         // TODO: switch to loading only DE_0 here once framework makes
+         // explicit calls to install DE keys for secondary users

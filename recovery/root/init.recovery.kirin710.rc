@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 import /init.recovery.kirin710.usb.rc
 import /init.recovery.marie.wifi.rc
+import /init.recovery.marie.runtime.rc
+import /init.recovery.marie.crypto.rc
 
 on early-init
     setprop ro.aera.ui.status_cutout_width 240

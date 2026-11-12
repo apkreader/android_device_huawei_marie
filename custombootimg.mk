@@ -5,9 +5,13 @@
 marie_recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery-marie.img
 INTERNAL_RECOVERYIMAGE_ARGS := $(subst $(recovery_ramdisk),$(marie_recovery_ramdisk),$(filter-out --kernel,$(INTERNAL_RECOVERYIMAGE_ARGS)))
 
-# Keep stock-compatible gzip while fitting networking in the 32 MiB ramdisk.
-$(marie_recovery_ramdisk): $(recovery_uncompressed_ramdisk) /usr/bin/zopfli
-	/usr/bin/zopfli --gzip --i3 -c $(recovery_uncompressed_ramdisk) > $@
+# Keep the kernel-compatible gzip wrapper. The extra runtime is unpacked into
+# RAM during early-init, before the recovery UI starts.
+$(marie_recovery_ramdisk): $(recovery_uncompressed_ramdisk) /usr/bin/zopfli \
+        $(DEVICE_PATH)/tools/pack_recovery.py $(DEVICE_PATH)/crypto/bootstrap-files.txt
+	/usr/bin/python3 $(DEVICE_PATH)/tools/pack_recovery.py \
+	    --cpio $(recovery_uncompressed_ramdisk) \
+	    --bootstrap $(DEVICE_PATH)/crypto/bootstrap-files.txt --output $@
 
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(filter-out $(recovery_ramdisk),$(recoveryimage-deps)) $(marie_recovery_ramdisk) $(RECOVERYIMAGE_EXTRA_DEPS) \
         $(DEVICE_PATH)/tools/huawei_container.py \

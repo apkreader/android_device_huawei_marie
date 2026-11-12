@@ -29,14 +29,13 @@ Working in device tests:
 - Touch on boot and after waking the screen.
 - Boot animation without the mid-animation screen interruption.
 - Wi-Fi driver initialization, scanning, WPA2 connection, and DHCP.
+- Automatic FBE unlock without a screen lock.
 
-Work in progress:
-
-- WPA3 is not enabled by the current Wi-Fi driver.
+Known limitation: WPA3 is not enabled by the current Wi-Fi driver.
 
 Untested:
 
-- File-based encryption (FBE) decryption.
+- PIN/password-protected FBE decryption.
 - MTP and ADB sideload.
 - MicroSD.
 - Backup, restore, and flashing from the UI.
@@ -45,14 +44,19 @@ Untested:
 Rendering uses the software framebuffer with ARM64 NEON blending. Interface density defaults to **Spacious** and can be changed
 under Theme Engine > Text & size.
 
+Recovery preferences and saved Wi-Fi networks use `/data/media/0/AERA`.
+Internal storage must be unlocked before they can be loaded or saved.
+
 ## Build
 
 Use the [AERA Android 16 manifest](https://github.com/AERA-Recovery/android_manifest),
 branch `aera-16.0`. Place this repository at
 `device/huawei/marie`.
 
-Install `zopfli` on the build host. The recovery ramdisk uses gzip compression
-and must fit the 32 MiB partition.
+Install `zopfli` on the build host. The image must fit the 32 MiB partition.
+Crypto libraries, Wi-Fi firmware, and the larger recovery files are compressed
+inside the ramdisk and unpacked into RAM before services start. Crypto does
+not require the installed system or vendor partitions.
 
 Proprietary files and build prebuilts are required. See [Stock files](#stock-files).
 From the AERA source root:
@@ -72,6 +76,10 @@ for patch in "$PWD"/device/huawei/marie/patches/wpa_supplicant/*.patch; do
     git -C external/wpa_supplicant_8 apply "$patch"
 done
 
+for patch in "$PWD"/device/huawei/marie/patches/vold/*.patch; do
+    git -C system/vold apply "$patch"
+done
+
 source build/envsetup.sh
 lunch twrp_marie-bp2a-eng
 m -j"$(nproc)" recoveryimage
@@ -85,9 +93,15 @@ Output: `out/target/product/marie/recovery.img`.
 
 ## Stock files
 
-Use files from the matching EMUI 9.1.0.399 firmware. The required files are listed
-in [proprietary-files.txt](proprietary-files.txt). Keep their relative paths under
-a local directory; the `vendor/odm/` entries may also be supplied under `odm/`.
+Use files from the matching EMUI 9.1.0.399 firmware. The file lists are:
+
+- [Stock recovery files](proprietary-files.txt).
+- [Crypto runtime](crypto/runtime-files.txt).
+- [Wi-Fi firmware](crypto/wifi-files.txt).
+
+Keep the listed paths under a local directory. The `vendor/odm/` entries may
+also be supplied under `odm/`. Crypto and Wi-Fi files are checked against their
+listed SHA-256 hashes.
 
 Prepare the tree with the stock recovery ramdisk and the x86_64 MagiskBoot
 binary from the official Magisk 31.1 APK:
@@ -99,20 +113,20 @@ python3 device/huawei/marie/tools/setup-vendor.py \
     --magiskboot /path/to/Magisk-31.1/lib/x86_64/libmagiskboot.so
 ```
 
-This generates `stock-blobs.mk`, `stock-blobs.json`, `proprietary/`, and the
-required files under `prebuilt/`. These generated files are excluded from Git.
+This generates the blob makefiles, `stock-blobs.json`, `proprietary/`, and the
+required files under `prebuilt/`. Generated files are excluded from Git.
 
 ## Installation
 
-Current tests use `recovery_ramdisk` on an unlocked bootloader:
+Tests currently use `recovery_ramdisk` on an unlocked bootloader:
 
 ```bash
 fastboot flash recovery_ramdisk out/target/product/marie/recovery.img
 ```
 
 Huawei uses separate kernel and ramdisk partitions. This image belongs in
-`recovery_ramdisk`; it is not a boot or kernel image. Keep a backup of the
-existing recovery ramdisk, including any Magisk-patched image.
+`recovery_ramdisk`. Keep a backup of the existing recovery ramdisk, including
+any Magisk-patched image.
 
 The image preserves the stock Huawei container metadata and requires an
 unlocked bootloader. It does not carry a new Huawei signature.

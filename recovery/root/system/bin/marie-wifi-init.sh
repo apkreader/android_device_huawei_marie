@@ -2,30 +2,20 @@
 # SPDX-License-Identifier: Apache-2.0
 set -e
 
-# Use the calibration selected by this phone's device tree and its installed
-# firmware. The recovery vendor ramdisk does not contain the MAR board INI.
-stock=/wifi/stock-vendor
-if [ ! -d "$stock/etc/wifi" ]; then
-    mkdir -p "$stock"
-    mount -o ro /dev/block/by-name/vendor "$stock"
-fi
+# Firmware is bundled with recovery; this configuration is tested on MAR-LX1B.
 ini=$(tr -d '\000' < /proc/device-tree/hisi_cust_cfg/ini_file_name)
 case "$ini" in
-    /vendor/etc/cfg_*_hisi.ini|/vendor/etc/cfg_*_hisi_nxp.ini) ;;
+    /vendor/etc/cfg_marie_plus_lx1am_hisi.ini) ;;
     *) echo "marie Wi-Fi: unsupported board configuration" >&2; exit 1 ;;
 esac
-mkdir -p /vendor/etc/wifi /vendor/firmware /tmp/recovery/sockets
+[ -r "$ini" ]
+for firmware in wifi_cfg bfgx_cfg bfgx_and_wifi_cfg cr4_asic.bin CPU_RAM_SCHED.bin CPU_RAM_WBS.bin; do
+    [ -r "/vendor/firmware/$firmware" ]
+done
+mkdir -p /tmp/recovery/sockets
 chmod 0755 /tmp/recovery
 chown 1010:1010 /tmp/recovery/sockets
 chmod 0770 /tmp/recovery/sockets
-if [ ! "$stock/${ini#/vendor/}" -ef "$ini" ]; then
-    cp "$stock/${ini#/vendor/}" "$ini"
-fi
-for firmware in wifi_cfg bfgx_cfg bfgx_and_wifi_cfg cr4_asic.bin CPU_RAM_SCHED.bin CPU_RAM_WBS.bin; do
-    if [ ! "$stock/firmware/$firmware" -ef "/vendor/firmware/$firmware" ]; then
-        cp "$stock/firmware/$firmware" "/vendor/firmware/$firmware"
-    fi
-done
 
 # The stock recovery initializes NVE before connectivity. Wi-Fi reads its
 # factory calibration and MAC through this driver, even while /data is locked.
