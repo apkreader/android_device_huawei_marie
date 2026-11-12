@@ -1,0 +1,26 @@
+--- a/twrp.cpp
++++ b/twrp.cpp
+@@ -285,6 +285,11 @@
+ #endif
+ 	Decrypt_Page(skip_decryption, datamedia);
+ 
++	// The fallback decrypt UI can return a reboot or power-off request.
++	// Leave startup here so main can execute it without opening another UI.
++	if (!DataManager::GetStrValue("tw_reboot_arg").empty())
++		return;
++
+ 	// Check for and load custom theme if present
+ 	TWFunc::check_selinux_support();
+ 	gui_loadCustomResources();
+@@ -764,6 +769,11 @@
+ 			startup.Should_Skip_Decryption() || startup.Get_Aera_Soft_Switch(),
+ 			startup.Get_Aera_Soft_Switch());
+ 	}
++	if (!DataManager::GetStrValue("tw_reboot_arg").empty()) {
++		delete adb_bu_fifo;
++		reboot();
++		return 0;
++	}
+ 	// Fox extra setup
+   	TWFunc::Setup_Verity_Forced_Encryption();
+ 
