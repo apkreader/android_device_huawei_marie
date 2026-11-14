@@ -11,6 +11,8 @@ PRODUCT_COPY_FILES += \
     $(DEVICE_PATH)/recovery/root/system/etc/wifi/wpa_supplicant.conf:recovery/root/system/etc/wifi/wpa_supplicant.conf \
     $(DEVICE_PATH)/recovery/root/system/etc/vintf/manifest.xml:recovery/root/system/etc/vintf/manifest.xml \
     $(DEVICE_PATH)/recovery/root/vendor/etc/vintf/manifest.xml:recovery/root/vendor/etc/vintf/manifest.xml \
+    $(DEVICE_PATH)/recovery/root/system/bin/marie-gpu-launch.sh:recovery/root/system/bin/marie-gpu-launch.sh \
+    $(DEVICE_PATH)/recovery/root/system/bin/marie-gpu-libraries.sh:recovery/root/system/bin/marie-gpu-libraries.sh \
     $(DEVICE_PATH)/recovery/root/init.recovery.kirin710.rc:recovery/root/init.recovery.kirin710.rc \
     $(DEVICE_PATH)/recovery/root/init.recovery.kirin710.usb.rc:recovery/root/init.recovery.kirin710.usb.rc \
     $(DEVICE_PATH)/recovery/root/ueventd.kirin710.rc:recovery/root/ueventd.kirin710.rc \

@@ -38,3 +38,10 @@ on property:odm.thp.service_enable=1
 
 on property:odm.thp.service_enable=0
     stop marie-aptouch
+
+# Stage the matching stock graphics libraries before starting AERA.
+service recovery /system/bin/sh /system/bin/marie-gpu-launch.sh
+    override
+    socket recovery stream 422 system system
+    seclabel u:r:recovery:s0
+    user root

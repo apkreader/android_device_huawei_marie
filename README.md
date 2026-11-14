@@ -44,7 +44,11 @@ Untested:
 - Restore and flashing from the UI.
 - Installation to eRecovery.
 
-Rendering uses the software framebuffer with ARM64 NEON blending. Interface density defaults to **Spacious** and can be changed
+This branch uses the stock Mali-G51 driver with gralloc1/HWC2. Failed GPU setup
+falls back to the software framebuffer. Graphics libraries are read from the
+matching installed system and vendor partitions.
+
+Interface density defaults to **Spacious** and can be changed
 under Theme Engine > Text & size.
 
 Recovery preferences and saved Wi-Fi networks use `/data/media/0/AERA`.
@@ -55,6 +59,12 @@ Internal storage must be unlocked before they can be loaded or saved.
 Use the [AERA Android 16 manifest](https://github.com/AERA-Recovery/android_manifest),
 branch `aera-16.0`. Place this repository at
 `device/huawei/marie`.
+
+Use branch `mali-testing` from
+[`apkreader/android_bootable_recovery`](https://github.com/apkreader/android_bootable_recovery/tree/mali-testing).
+It includes the merged upstream fixes and the Mali renderer. General porting
+instructions are in
+[`aeraui/MALI_TESTING.md`](https://github.com/apkreader/android_bootable_recovery/blob/mali-testing/aeraui/MALI_TESTING.md).
 
 Install `zopfli` on the build host. The image must fit the 32 MiB partition.
 Crypto libraries, Wi-Fi firmware, and the larger recovery files are compressed
@@ -71,9 +81,7 @@ for patch in "$PWD"/device/huawei/marie/patches/*.patch; do
     git -C bootable/recovery apply "$patch"
 done
 
-for patch in "$PWD"/device/huawei/marie/patches/lvgl/*.patch; do
-    git -C external/lvgl apply "$patch"
-done
+python3 bootable/recovery/aeraui/tools/prepare-mali-lvgl.py
 
 for patch in "$PWD"/device/huawei/marie/patches/wpa_supplicant/*.patch; do
     git -C external/wpa_supplicant_8 apply "$patch"
@@ -93,7 +101,8 @@ m -j"$(nproc)" recoveryimage
 ```
 
 Apply the patches once to a clean recovery checkout. The current patches target
-recovery commit `e438f6de62090a79e81daf00b449b48da7377753`, vold commit
+the `mali-testing` recovery branch based on upstream
+`e438f6de62090a79e81daf00b449b48da7377753`, vold commit
 `991a8f982acee148e333ed6622978fa0f1a35d1f`, and supplicant commit
 `3ef7b491990ee71f3cbad5c70b274430fa8d5c13`.
 
