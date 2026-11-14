@@ -93,8 +93,9 @@ m -j"$(nproc)" recoveryimage
 ```
 
 Apply the patches once to a clean recovery checkout. The current patches target
-recovery commit `fac04635f28657cda467f3abb9ba6ebb6d52fa6e` and supplicant
-commit `3ef7b491990ee71f3cbad5c70b274430fa8d5c13`.
+recovery commit `e438f6de62090a79e81daf00b449b48da7377753`, vold commit
+`991a8f982acee148e333ed6622978fa0f1a35d1f`, and supplicant commit
+`3ef7b491990ee71f3cbad5c70b274430fa8d5c13`.
 
 Output: `out/target/product/marie/recovery.img`.
 

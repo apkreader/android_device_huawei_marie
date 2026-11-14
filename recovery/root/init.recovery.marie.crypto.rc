@@ -2,6 +2,7 @@
 on early-init
     setprop ro.aera.crypto.wait_for_keystore true
     setprop ro.aera.crypto.legacy_keystore true
+    setprop ro.aera.crypto.legacy_layout true
 
 on init
     mkdir /sec_storage 0600 root root
