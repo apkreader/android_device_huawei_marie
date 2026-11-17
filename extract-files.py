@@ -7,6 +7,8 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import tempfile
 
 
@@ -44,8 +46,14 @@ def main():
     destination.mkdir(exist_ok=True)
     for image in firmware["images"]:
         target = destination / image["name"]
-        if target.is_file() and sha256(target) == image["sha256"]:
+        output_hash = image.get("prepared_sha256", image["sha256"])
+        if target.is_file() and sha256(target) == output_hash:
             print(f"{target.name}: already extracted")
+            continue
+        if image["name"] == "vendor.img":
+            subprocess.run([sys.executable, str(args.vendor_tree / "tools/prepare-vendor.py"),
+                            str(args.source / image["name"]), str(target)], check=True)
+            print(f"{target.name}: prepared")
             continue
         with tempfile.NamedTemporaryFile(dir=destination, delete=False) as stream:
             temporary = Path(stream.name)
