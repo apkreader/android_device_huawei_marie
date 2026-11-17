@@ -50,6 +50,8 @@ conventional `boot` partition. Recovery and OTA builds remain disabled; the
 
 `local_manifest.xml` adds these repositories, the AOSP VNDK 28 snapshot and
 the pinned Android 9 GCC 4.9 toolchain to a LineageOS 24.0 source checkout.
+The kernel revision includes the BPF support Android 17 needs at boot and
+the Hi1102 fix for WPA authentication.
 
 The Android 9 SELinux mapping, FCM 3 matrix and 4.9 kernel requirements come
 from LineageOS 20.0. Device additions retain the old `vfat` rules for `fuseblk`
