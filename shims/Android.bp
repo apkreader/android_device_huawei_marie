@@ -1,0 +1,9 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+cc_library_shared {
+    name: "libwifi_fdsan_compat",
+    vendor: true,
+    srcs: ["wifi_fdsan.c"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}

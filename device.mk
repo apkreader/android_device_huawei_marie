@@ -41,4 +41,9 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PACKAGES += framework_compatibility_matrix.3.xml
 
-PRODUCT_PACKAGES += android.hardware.lights-service.marie
+PRODUCT_PACKAGES += \
+    android.hardware.lights-service.marie \
+    libwifi_fdsan_compat
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/vendor.huawei.hardware.wifi@1.1-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.huawei.hardware.wifi@1.1-service.rc

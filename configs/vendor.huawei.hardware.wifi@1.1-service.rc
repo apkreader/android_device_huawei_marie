@@ -1,0 +1,6 @@
+service wifi_ext /vendor/bin/hw/vendor.huawei.hardware.wifi@1.1-service
+    class hal
+    capabilities NET_ADMIN NET_RAW SYS_MODULE
+    user wifi
+    group wifi gps dhcp inet net_raw net_admin
+    setenv LD_PRELOAD /vendor/lib64/libwifi_fdsan_compat.so
