@@ -40,3 +40,5 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/sepolicy/mapping/28.0.cil:$(TARGET_COPY_OUT_SYSTEM)/etc/selinux/mapping/28.0.cil
 
 PRODUCT_PACKAGES += framework_compatibility_matrix.3.xml
+
+PRODUCT_PACKAGES += android.hardware.lights-service.marie

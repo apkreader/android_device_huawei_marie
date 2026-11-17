@@ -1,0 +1,9 @@
+service marie-lights /system/bin/hw/android.hardware.lights-service.marie
+    class hal
+    user system
+    group system
+    interface aidl android.hardware.light.ILights/default
+
+on post-fs-data
+    chown system system /sys/class/leds/lcd_backlight0/brightness
+    chmod 0660 /sys/class/leds/lcd_backlight0/brightness

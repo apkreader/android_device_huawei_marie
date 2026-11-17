@@ -1,0 +1,17 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+cc_binary {
+    name: "android.hardware.lights-service.marie",
+    relative_install_path: "hw",
+    srcs: ["Lights.cpp"],
+    init_rc: ["lights-marie.rc"],
+    vintf_fragments: ["lights-marie.xml"],
+    shared_libs: [
+        "android.hardware.light-V2-ndk",
+        "libbase",
+        "libbinder_ndk",
+        "liblog",
+    ],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}
