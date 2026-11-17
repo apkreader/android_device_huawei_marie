@@ -90,6 +90,7 @@ else:
 
 for filename, description in (
     ("audio-hal4-client.patch", "Audio HAL 4.0 client support"),
+    ("hintmanager-legacy-power-hal.patch", "HintManager fallback without AIDL Power HAL"),
     ("libmeminfo-optional-gpu-map.patch", "Optional GPU memory statistics"),
 ):
     patch = device / "patches" / filename
