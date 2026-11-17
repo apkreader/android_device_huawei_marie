@@ -35,6 +35,7 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_SYSTEM_PROPERTIES += \
     ro.hardware.egl=mali \
+    ro.zygote.disable_gl_preload=true \
     persist.radio.multisim.config=dsds
 
 PRODUCT_COPY_FILES += \
