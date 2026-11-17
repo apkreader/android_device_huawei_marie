@@ -1,0 +1,14 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+apex_vndk {
+    name: "com.android.vndk.v28",
+    defaults: ["vndk-apex-defaults"],
+    manifest: "configs/vndk28-apex.json",
+    vndk_version: "28",
+    system_ext_specific: true,
+}

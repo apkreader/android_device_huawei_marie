@@ -3,11 +3,32 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from pathlib import Path
+import hashlib
 import subprocess
 
 
 device = Path(__file__).resolve().parent
 source = device.parents[2]
+target = source / "prebuilts/vndk/v28"
+patch = device / "patches/vndk28-protobuf.patch"
+revision = subprocess.check_output(["git", "-C", str(target), "rev-parse", "HEAD"], text=True).strip()
+if revision != "1cb210981d2baf325aaab36cdd84afa40c775f00":
+    raise SystemExit("Sync the VNDK 28 revision from local_manifest.xml first")
+
+blueprint = target / "Android.bp"
+original = "1323103c9ab3667ac40bba02ea63bcb1479e73b533d56ea85c795b2fe2f5a98d"
+prepared = "935f3b3970d33e8ceeaf6ae7a185c30fd7deafe8a72595fc484b5148361b29d2"
+current = hashlib.sha256(blueprint.read_bytes()).hexdigest()
+if current == prepared:
+    print("VNDK 28: Protobuf compatibility fix already applied")
+elif current == original:
+    command = ["git", "-C", str(target), "apply"]
+    subprocess.run(command + ["--check", str(patch)], check=True)
+    subprocess.run(command + [str(patch)], check=True)
+    assert hashlib.sha256(blueprint.read_bytes()).hexdigest() == prepared
+    print("VNDK 28: using LineageOS Protobuf compatibility modules")
+else:
+    raise SystemExit("VNDK 28 Android.bp has other changes; the build fix was not applied")
 
 target = source / "vendor/lineage"
 patch = device / "patches/kernel-modules-image-dependency.patch"

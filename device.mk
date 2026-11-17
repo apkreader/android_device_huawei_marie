@@ -4,6 +4,7 @@
 LOCAL_PATH := device/huawei/marie
 
 PRODUCT_SHIPPING_API_LEVEL := 28
+PRODUCT_EXTRA_VNDK_VERSIONS += 28
 
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 $(call inherit-product, vendor/huawei/marie/marie-vendor.mk)
