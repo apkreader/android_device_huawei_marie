@@ -26,5 +26,7 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.sf.lcd_density=480
 
+PRODUCT_PACKAGES += WifiOverlayMarie
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/fstab.kirin710:$(TARGET_COPY_OUT_RAMDISK)/fstab.kirin710
