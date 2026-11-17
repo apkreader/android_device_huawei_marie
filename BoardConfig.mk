@@ -23,6 +23,8 @@ TARGET_NO_BOOTLOADER := true
 TARGET_OTA_ASSERT_DEVICE := marie,HWMAR,MAR-LX1B,MAR-L21B
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := $(DEVICE_PATH)/vintf/compatibility_matrix.device.xml
 
+$(call soong_config_set_bool,libui,legacy_gralloc,true)
+
 # Kernel
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/huawei/kirin710

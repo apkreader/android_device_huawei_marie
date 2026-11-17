@@ -30,6 +30,9 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 PRODUCT_PACKAGES += WifiOverlayMarie
 
+PRODUCT_SYSTEM_PROPERTIES += \
+    ro.hardware.egl=mali
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/fstab.kirin710:$(TARGET_COPY_OUT_RAMDISK)/fstab.kirin710 \
     $(LOCAL_PATH)/configs/init.marie.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.rc \

@@ -87,3 +87,16 @@ if check.returncode == 0:
 else:
     subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
     print("vold: fscrypt v1 keyring support already applied")
+
+for filename, description in (
+    ("libmeminfo-optional-gpu-map.patch", "Optional GPU memory statistics"),
+):
+    patch = device / "patches" / filename
+    command = ["git", "-C", str(source), "apply"]
+    check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
+    if check.returncode == 0:
+        subprocess.run(command + [str(patch)], check=True)
+        print(description + ": applied")
+    else:
+        subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
+        print(description + ": already applied")
