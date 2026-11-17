@@ -30,6 +30,21 @@ elif current == original:
 else:
     raise SystemExit("VNDK 28 Android.bp has other changes; the build fix was not applied")
 
+target = source / "system/core"
+patch = device / "patches/ueventd-legacy-vendor.patch"
+command = ["git", "-C", str(target), "apply"]
+legacy_imports = (target / "rootdir/ueventd.rc").read_text().splitlines().count(
+    "import /vendor/ueventd.rc")
+if legacy_imports == 0:
+    subprocess.run(command + ["--check", str(patch)], check=True)
+    subprocess.run(command + [str(patch)], check=True)
+    print("ueventd: importing EMUI vendor rules")
+elif legacy_imports == 1:
+    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
+    print("ueventd: EMUI vendor import already applied")
+else:
+    raise SystemExit("ueventd.rc contains duplicate legacy vendor imports")
+
 target = source / "vendor/lineage"
 patch = device / "patches/kernel-modules-image-dependency.patch"
 command = ["git", "-C", str(target), "apply"]
@@ -40,3 +55,14 @@ if check.returncode == 0:
 else:
     subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
     print("Kernel modules: image dependency already applied")
+
+target = source / "system/core"
+patch = device / "patches/cpuset-legacy-mount.patch"
+command = ["git", "-C", str(target), "apply"]
+check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
+if check.returncode == 0:
+    subprocess.run(command + [str(patch)], check=True)
+    print("cpuset: retrying unsupported mount options on legacy kernels")
+else:
+    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
+    print("cpuset: legacy mount compatibility already applied")

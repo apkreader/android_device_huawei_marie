@@ -1,0 +1,20 @@
+--- a/libprocessgroup/setup/cgroup_map_write.cpp
++++ b/libprocessgroup/setup/cgroup_map_write.cpp
+@@ -199,8 +199,15 @@
+         options += ",noprefix,cpuset_v2_mode";
+     }
+ 
+-    if (mount("none", controller->path(), "cgroup", MS_NODEV | MS_NOEXEC | MS_NOSUID,
+-              options.c_str())) {
++    int mount_result = mount("none", controller->path(), "cgroup",
++                             MS_NODEV | MS_NOEXEC | MS_NOSUID, options.c_str());
++    if (mount_result != 0 && !strcmp(controller->name(), "cpuset") &&
++        (errno == EINVAL || errno == ENOENT)) {
++        PLOG(INFO) << "Retrying cpuset mount without cpuset_v2_mode";
++        mount_result = mount("none", controller->path(), "cgroup",
++                             MS_NODEV | MS_NOEXEC | MS_NOSUID, "cpuset,noprefix");
++    }
++    if (mount_result != 0) {
+         if (IsOptionalController(controller)) {
+             PLOG(INFO) << "Failed to mount optional controller " << controller->name();
+             return true;

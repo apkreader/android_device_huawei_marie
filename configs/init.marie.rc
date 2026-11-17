@@ -1,0 +1,6 @@
+# Copyright (C) 2026 apkreader
+# SPDX-License-Identifier: Apache-2.0
+
+on early-init
+    mkdir /dev/block/bootdevice 0755 root root
+    symlink /dev/block/by-name /dev/block/bootdevice/by-name

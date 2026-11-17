@@ -69,4 +69,6 @@ TARGET_COPY_OUT_PRODUCT := product
 TARGET_NO_RECOVERY := true
 TARGET_SKIP_OTA_PACKAGE := true
 
+BOARD_ROOT_EXTRA_FOLDERS += sec_storage
+
 include vendor/huawei/marie/BoardConfigVendor.mk

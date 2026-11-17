@@ -32,6 +32,7 @@ PRODUCT_PACKAGES += WifiOverlayMarie
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/fstab.kirin710:$(TARGET_COPY_OUT_RAMDISK)/fstab.kirin710 \
+    $(LOCAL_PATH)/configs/init.marie.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.rc \
     $(LOCAL_PATH)/sepolicy/mapping/28.0.cil:$(TARGET_COPY_OUT_SYSTEM)/etc/selinux/mapping/28.0.cil
 
 PRODUCT_PACKAGES += framework_compatibility_matrix.3.xml
