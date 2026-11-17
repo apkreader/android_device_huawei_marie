@@ -8,8 +8,9 @@ PRODUCT_SHIPPING_API_LEVEL := 28
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 $(call inherit-product, vendor/huawei/marie/marie-vendor.mk)
 
-# The bootloader uses separate kernel and recovery ramdisk partitions.
-PRODUCT_BUILD_BOOT_IMAGE := false
+# Normal boot images belong on the Huawei kernel partition.
+PRODUCT_BUILD_BOOT_IMAGE := true
+PRODUCT_BUILD_RAMDISK_IMAGE := true
 PRODUCT_BUILD_RECOVERY_IMAGE := false
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_INIT_BOOT_IMAGE := false

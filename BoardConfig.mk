@@ -26,13 +26,28 @@ TARGET_OTA_ASSERT_DEVICE := marie,HWMAR,MAR-LX1B,MAR-L21B
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/huawei/kirin710
 TARGET_KERNEL_CONFIG := marie_defconfig
+marie_kernel_toolchain := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9)
+KERNEL_CROSS_COMPILE := CROSS_COMPILE=$(marie_kernel_toolchain)/bin/aarch64-linux-android-
+KERNEL_CC := CC=$(marie_kernel_toolchain)/bin/real-aarch64-linux-android-gcc LD=$(marie_kernel_toolchain)/bin/aarch64-linux-android-ld
+TARGET_KERNEL_LIBC_SYSROOT_USE := host
+TARGET_KERNEL_ADDITIONAL_FLAGS += HOSTCC=clang HOSTCXX=clang++ HOSTCFLAGS="-O2 -Wall"
 BOARD_KERNEL_IMAGE_NAME := Image.gz
+# Vendor is prebuilt, so install compiled kernel modules on system.
+NEED_KERNEL_MODULE_SYSTEM := true
+BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 2048
+BOARD_MKBOOTIMG_ARGS += \
+    --header_version 1 \
+    --kernel_offset 0x00080000 \
+    --ramdisk_offset 0x07c00000 \
+    --second_offset 0x00f00000 \
+    --tags_offset 0x07a00000
 
 # Physical partitions. Huawei's _a GPT names do not indicate A/B updates.
 AB_OTA_UPDATER := false
 BOARD_USES_RECOVERY_AS_BOOT := false
 BOARD_FLASH_BLOCK_SIZE := 4096
+BOARD_BOOTIMAGE_PARTITION_SIZE := 25165824
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2424307712
 BOARD_PRODUCTIMAGE_PARTITION_SIZE := 2256535552
 BOARD_VENDORIMAGE_PARTITION_SIZE := 503316480
@@ -49,7 +64,7 @@ TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_ODM := odm
 TARGET_COPY_OUT_PRODUCT := product
 
-# Boot-image packaging and OTA installation still need Huawei split-boot support.
+# Keep the installed recovery; OTA installation is not implemented yet.
 TARGET_NO_RECOVERY := true
 TARGET_SKIP_OTA_PACKAGE := true
 
