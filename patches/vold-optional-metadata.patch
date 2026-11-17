@@ -1,0 +1,13 @@
+diff --git a/FsCrypt.cpp b/FsCrypt.cpp
+--- a/FsCrypt.cpp
++++ b/FsCrypt.cpp
+@@ -389,7 +389,8 @@ static bool get_volume_file_encryption_options(EncryptionOptions* options) {
+ }
+ 
+ bool is_metadata_wrapped_key_supported() {
+-    return GetEntryForMountPoint(&fstab_default, METADATA_MNT_POINT)->fs_mgr_flags.wrapped_key;
++    const auto* entry = GetEntryForMountPoint(&fstab_default, METADATA_MNT_POINT);
++    return entry != nullptr && entry->fs_mgr_flags.wrapped_key;
+ }
+ 
+ // Prepare a directory without assigning it an encryption policy.  The directory

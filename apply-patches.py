@@ -66,3 +66,24 @@ if check.returncode == 0:
 else:
     subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
     print("cpuset: legacy mount compatibility already applied")
+
+target = source / "system/vold"
+patch = device / "patches/vold-optional-metadata.patch"
+command = ["git", "-C", str(target), "apply"]
+check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
+if check.returncode == 0:
+    subprocess.run(command + [str(patch)], check=True)
+    print("vold: handling devices without a metadata partition")
+else:
+    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
+    print("vold: optional metadata entry check already applied")
+
+patch = device / "patches/vold-legacy-keyring.patch"
+command = ["git", "-C", str(target), "apply"]
+check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
+if check.returncode == 0:
+    subprocess.run(command + [str(patch)], check=True)
+    print("vold: restoring fscrypt v1 keyring support")
+else:
+    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
+    print("vold: fscrypt v1 keyring support already applied")
