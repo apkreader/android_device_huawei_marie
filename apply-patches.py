@@ -88,6 +88,17 @@ else:
     subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
     print("vold: fscrypt v1 keyring support already applied")
 
+target = source / "frameworks/opt/telephony"
+patch = device / "patches/legacy-radio-hal11.patch"
+command = ["git", "-C", str(target), "apply"]
+check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
+if check.returncode == 0:
+    subprocess.run(command + [str(patch)], check=True)
+    print("Telephony: restored Radio HAL 1.1 support")
+else:
+    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
+    print("Telephony: Radio HAL 1.1 support already applied")
+
 for filename, description in (
     ("audio-hal4-client.patch", "Audio HAL 4.0 client support"),
     ("hintmanager-legacy-power-hal.patch", "HintManager fallback without AIDL Power HAL"),
