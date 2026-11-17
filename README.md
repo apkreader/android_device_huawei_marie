@@ -6,6 +6,9 @@ Device configuration for LineageOS 24.0 (Android 17).
 
 LineageOS boots on the development phone with additional kernel and init
 changes. WPA2 Wi-Fi works on that build. This tree is still a work in progress.
+Radio HAL 1.1 reports the baseband and both IMEIs. The modem reported both
+slots empty during testing. SIM registration, calls, SMS and mobile data
+still need verification.
 
 The hardware base is MAR-L21B 9.1.0.399 (C431). Vendor and ODM are kept as
 matching stock images while their HALs are brought up. Vendor preparation

@@ -34,7 +34,8 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/android.hardware.telephony.gsm.xml
 
 PRODUCT_SYSTEM_PROPERTIES += \
-    ro.hardware.egl=mali
+    ro.hardware.egl=mali \
+    persist.radio.multisim.config=dsds
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/fstab.kirin710:$(TARGET_COPY_OUT_RAMDISK)/fstab.kirin710 \
