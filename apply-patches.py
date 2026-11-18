@@ -103,6 +103,7 @@ for filename, description in (
     ("audio-hal4-client.patch", "Audio HAL 4.0 client support"),
     ("hintmanager-legacy-power-hal.patch", "HintManager fallback without AIDL Power HAL"),
     ("libmeminfo-optional-gpu-map.patch", "Optional GPU memory statistics"),
+    ("input-vsync-sampling.patch", "Sample batched input at vsync"),
 ):
     patch = device / "patches" / filename
     command = ["git", "-C", str(source), "apply"]
