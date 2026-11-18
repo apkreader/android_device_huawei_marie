@@ -6,7 +6,7 @@ cc_binary {
     relative_install_path: "hw",
     srcs: ["Lights.cpp"],
     init_rc: ["lights-marie.rc"],
-    vintf_fragments: ["lights-marie.xml"],
+    vintf_fragment_modules: ["lights-marie.xml"],
     shared_libs: [
         "android.hardware.light-V2-ndk",
         "libbase",
@@ -14,4 +14,9 @@ cc_binary {
         "liblog",
     ],
     cflags: ["-Wall", "-Wextra", "-Werror"],
+}
+
+vintf_fragment {
+    name: "lights-marie.xml",
+    src: "lights-marie.xml",
 }
