@@ -6,4 +6,5 @@
     <!-- Stock notch bounds: 118 x 81 pixels, starting at x=481. -->
     <string name="config_mainBuiltInDisplayCutout" translatable="false">M -59,0 L -59,81 L 59,81 L 59,0 Z</string>
     <bool name="config_fillMainBuiltInDisplayCutout">false</bool>
+    <dimen name="rounded_corner_content_padding">20dp</dimen>
 </resources>
