@@ -4,3 +4,12 @@
 on early-init
     mkdir /dev/block/bootdevice 0755 root root
     symlink /dev/block/by-name /dev/block/bootdevice/by-name
+
+on init
+    mkdir /dev/cpuset/marie-display
+    copy /dev/cpuset/mems /dev/cpuset/marie-display/mems
+    write /dev/cpuset/marie-display/cpus 4-7
+    chown system system /dev/cpuset/marie-display/tasks
+    chown system system /dev/cpuset/marie-display/cgroup.procs
+    chmod 0664 /dev/cpuset/marie-display/tasks
+    chmod 0664 /dev/cpuset/marie-display/cgroup.procs
