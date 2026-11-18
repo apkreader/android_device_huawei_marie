@@ -5,7 +5,7 @@ Device configuration for LineageOS 24.0 (Android 17).
 ## Status
 
 LineageOS boots on the development phone with additional kernel and init
-changes. WPA2 Wi-Fi works on that build. This tree is still a work in progress.
+changes. WPA2 Wi-Fi and the camera work on that build. This tree is still a work in progress.
 Radio HAL 1.1 reports the baseband and both IMEIs. The modem reported both
 slots empty during testing. SIM registration, calls, SMS and mobile data
 still need verification.
@@ -22,7 +22,7 @@ Still needed:
 - Huawei HAL integration and runtime testing with VNDK 28.
 - Init, SELinux policy and VINTF integration.
 - OTA installation.
-- Device testing, including display, radio, audio, camera and encryption.
+- Device testing, including display, radio, audio and encryption.
 
 The boot image uses header version 1 and includes first-stage init and the
 device fstab. It belongs on the 24 MiB `kernel` partition. There is no
