@@ -28,6 +28,11 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.sf.lcd_density=480
 
+# Bluetooth
+PRODUCT_PRODUCT_PROPERTIES += \
+    bluetooth.profile.a2dp.source.enabled=true \
+    bluetooth.profile.hfp.ag.enabled=true
+
 PRODUCT_PACKAGES += WifiOverlayMarie
 
 PRODUCT_COPY_FILES += \
