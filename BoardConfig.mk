@@ -67,8 +67,14 @@ TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_ODM := odm
 TARGET_COPY_OUT_PRODUCT := product
 
-# Keep the installed recovery; OTA installation is not implemented yet.
+# Huawei loads recovery from recovery_ramdisk with a separate kernel.
+ifeq ($(MARIE_BUILD_RECOVERY),true)
+BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE := true
+BOARD_USES_FULL_RECOVERY_IMAGE := true
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/configs/fstab.kirin710
+else
 TARGET_NO_RECOVERY := true
+endif
 TARGET_SKIP_OTA_PACKAGE := true
 
 BOARD_ROOT_EXTRA_FOLDERS += sec_storage

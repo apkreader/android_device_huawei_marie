@@ -1,0 +1,28 @@
+# Copyright (C) 2026 apkreader
+# SPDX-License-Identifier: Apache-2.0
+
+on early-init
+    setprop sys.usb.configfs 1
+    setprop sys.usb.controller ff100000.dwc3
+
+# The stock recovery vendor ramdisk starts this as a critical service.
+service oeminfo_nvm /system/bin/true
+    override
+    disabled
+    oneshot
+
+service marie-aptouch /vendor/bin/aptouch_daemon
+    class core
+    user root
+    group root system shell input wakelock
+    disabled
+    seclabel u:r:recovery:s0
+
+on boot
+    start marie-aptouch
+
+on property:odm.thp.service_enable=1
+    start marie-aptouch
+
+on property:odm.thp.service_enable=0
+    stop marie-aptouch

@@ -12,7 +12,16 @@ $(call inherit-product, vendor/huawei/marie/marie-vendor.mk)
 # Normal boot images belong on the Huawei kernel partition.
 PRODUCT_BUILD_BOOT_IMAGE := true
 PRODUCT_BUILD_RAMDISK_IMAGE := true
+ifeq ($(MARIE_BUILD_RECOVERY),true)
+PRODUCT_BUILD_RECOVERY_IMAGE := true
+PRODUCT_SYSTEM_PROPERTIES += ro.minui.pixel_format=BGRA_8888
+# The stock recovery kernel can report ro.hardware=unknown.
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/init.recovery.kirin710.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.kirin710.rc \
+    $(LOCAL_PATH)/configs/init.recovery.kirin710.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.unknown.rc
+else
 PRODUCT_BUILD_RECOVERY_IMAGE := false
+endif
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_INIT_BOOT_IMAGE := false
 PRODUCT_BUILD_VENDOR_IMAGE := false
