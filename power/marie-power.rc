@@ -1,0 +1,6 @@
+service marie-power /vendor/bin/hw/android.hardware.power-service.marie
+    override
+    class hal
+    user system
+    group system
+    interface aidl android.hardware.power.IPower/default

@@ -1,0 +1,3 @@
+{
+  "requireLibs": ["libbinder_ndk.so"]
+}

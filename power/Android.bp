@@ -1,0 +1,20 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+cc_binary {
+    name: "android.hardware.power-service.marie",
+    vendor: true,
+    relative_install_path: "hw",
+    compile_multilib: "64",
+    defaults: ["android.hardware.power-ndk_static"],
+    stl: "libc++_static",
+    shared_libs: ["libbinder_ndk", "liblog"],
+    static_libs: [
+        "android.hardware.common-V2-ndk",
+        "android.hardware.common.fmq-V1-ndk",
+    ],
+    srcs: ["Power.cpp"],
+    init_rc: ["marie-power.rc"],
+    vintf_fragments: ["marie-power.xml"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}
