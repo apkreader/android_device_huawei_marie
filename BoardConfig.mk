@@ -25,18 +25,12 @@ DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := $(DEVICE_PATH)/vintf/compatibility
 
 $(call soong_config_set_bool,libui,legacy_gralloc,true)
 
-# Kernel
+# Kernel (Linux 6.12, Clang/LLVM)
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/huawei/kirin710
-TARGET_KERNEL_CONFIG := marie_defconfig
-marie_kernel_toolchain := $(abspath prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9)
-KERNEL_CROSS_COMPILE := CROSS_COMPILE=$(marie_kernel_toolchain)/bin/aarch64-linux-android-
-KERNEL_CC := CC=$(marie_kernel_toolchain)/bin/real-aarch64-linux-android-gcc LD=$(marie_kernel_toolchain)/bin/aarch64-linux-android-ld
-TARGET_KERNEL_LIBC_SYSROOT_USE := host
-TARGET_KERNEL_ADDITIONAL_FLAGS += HOSTCC=clang HOSTCXX=clang++ HOSTCFLAGS="-O2 -Wall"
+TARGET_KERNEL_CONFIG := kirin710_defconfig
+TARGET_KERNEL_CLANG_COMPILE := true
 BOARD_KERNEL_IMAGE_NAME := Image.gz
-# Vendor is prebuilt, so install compiled kernel modules on system.
-NEED_KERNEL_MODULE_SYSTEM := true
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_MKBOOTIMG_ARGS += \
@@ -77,6 +71,23 @@ TARGET_NO_RECOVERY := true
 endif
 TARGET_SKIP_OTA_PACKAGE := true
 
-BOARD_ROOT_EXTRA_FOLDERS += sec_storage
+BOARD_ROOT_EXTRA_FOLDERS += sec_storage metadata
+
+# SELinux
+SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 
 include vendor/huawei/marie/BoardConfigVendor.mk
+
+ifeq ($(MARIE_NATIVE_VENDOR),true)
+$(call soong_config_set_bool,marie_native_vendor,enabled,true)
+VENDOR_SECURITY_PATCH := 2018-06-19
+BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+BOARD_PREBUILT_VENDORIMAGE :=
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := erofs
+BOARD_EROFS_USE_LEGACY_COMPRESSION := true
+BOARD_VENDORIMAGE_EROFS_COMPRESSOR := lz4hc,level=12
+TARGET_FS_CONFIG_GEN += device/huawei/marie_native/config.fs
+TARGET_VENDOR_PROP += device/huawei/marie_native/vendor.prop
+include device/huawei/marie_native/vendor-vndk28.mk
+endif

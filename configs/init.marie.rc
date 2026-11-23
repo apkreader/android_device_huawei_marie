@@ -4,6 +4,7 @@
 on early-init
     mkdir /dev/block/bootdevice 0755 root root
     symlink /dev/block/by-name /dev/block/bootdevice/by-name
+    mount tmpfs tmpfs /metadata mode=0775,uid=0,gid=1000
 
 on init
     mkdir /dev/cpuset/marie-display
@@ -13,3 +14,6 @@ on init
     chown system system /dev/cpuset/marie-display/cgroup.procs
     chmod 0664 /dev/cpuset/marie-display/tasks
     chmod 0664 /dev/cpuset/marie-display/cgroup.procs
+
+on boot && property:ro.boot.odm.conn.schiptype=hi1102
+    start octty

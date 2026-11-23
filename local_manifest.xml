@@ -4,7 +4,6 @@
     <remote name="aosp-legacy" fetch="https://android.googlesource.com/" />
     <project name="android_device_huawei_marie" path="device/huawei/marie" remote="apkreader" revision="lineage-24.0" />
     <project name="android_vendor_huawei_marie" path="vendor/huawei/marie" remote="apkreader" revision="lineage-24.0" />
-    <project name="android_kernel_huawei_kirin710" path="kernel/huawei/kirin710" remote="apkreader" revision="ad3da0646dbe42e0c06cdbd8432f9c7917c21287" upstream="refs/heads/lineage-24.0" />
-    <project name="platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9" path="prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9" remote="aosp-legacy" revision="961622e926a1b21382dba4dd9fe0e5fb3ee5ab7c" />
+    <project name="android_kernel_huawei_kirin710" path="kernel/huawei/kirin710" remote="apkreader" revision="lineage24-6.12.y" />
     <project name="platform/prebuilts/vndk/v28" path="prebuilts/vndk/v28" remote="aosp-legacy" revision="1cb210981d2baf325aaab36cdd84afa40c775f00" />
 </manifest>

@@ -15,16 +15,19 @@ PRODUCT_BUILD_RAMDISK_IMAGE := true
 ifeq ($(MARIE_BUILD_RECOVERY),true)
 PRODUCT_BUILD_RECOVERY_IMAGE := true
 PRODUCT_SYSTEM_PROPERTIES += ro.minui.pixel_format=BGRA_8888
-# The stock recovery kernel can report ro.hardware=unknown.
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/init.recovery.kirin710.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.kirin710.rc \
-    $(LOCAL_PATH)/configs/init.recovery.kirin710.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.unknown.rc
+    $(LOCAL_PATH)/configs/init.recovery.kirin710.rc:$(TARGET_COPY_OUT_RECOVERY)/root/init.recovery.kirin710.rc
 else
 PRODUCT_BUILD_RECOVERY_IMAGE := false
 endif
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_INIT_BOOT_IMAGE := false
+ifeq ($(MARIE_NATIVE_VENDOR),true)
+PRODUCT_BUILD_VENDOR_IMAGE := true
+$(call inherit-product, vendor/huawei/marie_native/marie_native-vendor.mk)
+else
 PRODUCT_BUILD_VENDOR_IMAGE := false
+endif
 PRODUCT_BUILD_ODM_IMAGE := false
 PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
 
@@ -40,7 +43,8 @@ PRODUCT_PRODUCT_PROPERTIES += \
 # Bluetooth
 PRODUCT_PRODUCT_PROPERTIES += \
     bluetooth.profile.a2dp.source.enabled=true \
-    bluetooth.profile.hfp.ag.enabled=true
+    bluetooth.profile.hfp.ag.enabled=true \
+    bluetooth.a2dp.restore_link_policy_on_close=false
 
 PRODUCT_PACKAGES += WifiOverlayMarie
 
@@ -48,14 +52,30 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/android.hardware.telephony.gsm.xml
 
 PRODUCT_SYSTEM_PROPERTIES += \
-    ro.hardware.egl=mali \
+    ro.hardware.egl=mesa \
+    persist.graphics.egl=mesa \
+    drm.gpu.vendor_name=panfrost \
+    ro.opengles.version=196609 \
+    ro.hwui.use_vulkan=false \
+    debug.hwui.renderer=skiagl \
     ro.zygote.disable_gl_preload=true \
+    ro.surface_flinger.max_frame_buffer_acquired_buffers=3 \
+    ro.surface_flinger.supports_background_blur=0 \
+    persist.sys.sf.disable_blurs=1 \
+    debug.sf.use_phase_offsets_as_durations=1 \
+    debug.sf.late.sf.duration=10500000 \
+    debug.sf.early.sf.duration=10500000 \
+    debug.sf.earlyGl.sf.duration=13500000 \
+    debug.sf.late.app.duration=16600000 \
+    debug.sf.early.app.duration=16600000 \
+    debug.sf.earlyGl.app.duration=16600000 \
     persist.radio.multisim.config=dsds
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/fstab.kirin710:$(TARGET_COPY_OUT_RAMDISK)/fstab.kirin710 \
     $(LOCAL_PATH)/configs/init.marie.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.rc \
     $(LOCAL_PATH)/configs/init.marie.usb.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.usb.rc \
+    $(LOCAL_PATH)/configs/cgroups.json:$(TARGET_COPY_OUT_VENDOR)/etc/cgroups.json \
     $(LOCAL_PATH)/configs/task_profiles.json:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/task_profiles.json \
     $(LOCAL_PATH)/sepolicy/mapping/28.0.cil:$(TARGET_COPY_OUT_SYSTEM)/etc/selinux/mapping/28.0.cil
 
