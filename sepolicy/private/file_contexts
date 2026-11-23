@@ -1,0 +1,4 @@
+# Copyright (C) 2026 apkreader
+# SPDX-License-Identifier: Apache-2.0
+
+/system/bin/hw/android\.hardware\.lights-service\.marie u:object_r:hal_light_default_exec:s0

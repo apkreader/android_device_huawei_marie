@@ -1748,3 +1748,6 @@
 
 ;; The stock vendor Binder service uses the older service_manager attribute.
 (typeattributeset vndservice_manager_type (hivwserver_service aptouch_daemon_service))
+
+;; Android 17 libcutils uses /dev/ashmem<boot_id> for vendor_api_level < 202604.
+(allow domain ashmem_libcutils_device (chr_file (open)))
