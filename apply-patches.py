@@ -4,12 +4,26 @@
 
 from pathlib import Path
 import hashlib
-import os
 import subprocess
 
 
 device = Path(__file__).resolve().parent
 source = device.parents[2]
+
+
+def apply_patch(project_rel, filename, description):
+    target = source / project_rel if project_rel else source
+    patch = device / "patches" / filename
+    cmd = ["git", "-C", str(target), "apply"]
+    if subprocess.run(cmd + ["--check", str(patch)], capture_output=True).returncode == 0:
+        subprocess.run(cmd + [str(patch)], check=True)
+        print(f"{description}: applied")
+    else:
+        subprocess.run(cmd + ["--reverse", "--check", str(patch)], check=True)
+        print(f"{description}: already applied")
+
+
+# VNDK 28 protobuf compatibility
 target = source / "prebuilts/vndk/v28"
 patch = device / "patches/vndk28-protobuf.patch"
 revision = subprocess.check_output(["git", "-C", str(target), "rev-parse", "HEAD"], text=True).strip()
@@ -23,85 +37,21 @@ current = hashlib.sha256(blueprint.read_bytes()).hexdigest()
 if current == prepared:
     print("VNDK 28: Protobuf compatibility fix already applied")
 elif current == original:
-    command = ["git", "-C", str(target), "apply"]
-    subprocess.run(command + ["--check", str(patch)], check=True)
-    subprocess.run(command + [str(patch)], check=True)
+    cmd = ["git", "-C", str(target), "apply"]
+    subprocess.run(cmd + ["--check", str(patch)], check=True)
+    subprocess.run(cmd + [str(patch)], check=True)
     assert hashlib.sha256(blueprint.read_bytes()).hexdigest() == prepared
     print("VNDK 28: using LineageOS Protobuf compatibility modules")
 else:
     raise SystemExit("VNDK 28 Android.bp has other changes; the build fix was not applied")
 
-native_vendor = os.environ.get("MARIE_NATIVE_VENDOR") == "true"
-
-
-def set_legacy_patch(project, filename, strip=1):
-    patch = device / "patches" / filename
-    command = ["git", "-C", str(source / project), "apply", f"-p{strip}"]
-    desired = ["--reverse"] if native_vendor else []
-    opposite = [] if native_vendor else ["--reverse"]
-    if subprocess.run(command + desired + ["--check", str(patch)], capture_output=True).returncode == 0:
-        subprocess.run(command + desired + [str(patch)], check=True)
-    else:
-        subprocess.run(command + opposite + ["--check", str(patch)], check=True)
-
-
-set_legacy_patch("system/core", "ueventd-legacy-vendor.patch")
-set_legacy_patch("frameworks/base", "hintmanager-legacy-power-hal.patch", strip=3)
-
-target = source / "system/core"
-command = ["git", "-C", str(target), "apply"]
-
-for filename in ("init-block-device-lookup.patch", "init-huawei-bootdevice-links.patch"):
-    patch = device / "patches" / filename
-    check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
-    if check.returncode == 0:
-        subprocess.run(command + [str(patch)], check=True)
-    else:
-        subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-
-target = source / "system/vold"
-patch = device / "patches/vold-optional-metadata.patch"
-command = ["git", "-C", str(target), "apply"]
-check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
-if check.returncode == 0:
-    subprocess.run(command + [str(patch)], check=True)
-    print("vold: handling devices without a metadata partition")
-else:
-    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-    print("vold: optional metadata entry check already applied")
-
-patch = device / "patches/vold-legacy-keyring.patch"
-command = ["git", "-C", str(target), "apply"]
-check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
-if check.returncode == 0:
-    subprocess.run(command + [str(patch)], check=True)
-    print("vold: restoring fscrypt v1 keyring support")
-else:
-    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-    print("vold: fscrypt v1 keyring support already applied")
-
-target = source / "frameworks/opt/telephony"
-patch = device / "patches/legacy-radio-hal11.patch"
-command = ["git", "-C", str(target), "apply"]
-check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
-if check.returncode == 0:
-    subprocess.run(command + [str(patch)], check=True)
-    print("Telephony: restored Radio HAL 1.1 support")
-else:
-    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-    print("Telephony: Radio HAL 1.1 support already applied")
-
-for filename, description in (
-    ("audio-hal4-client.patch", "Audio HAL 4.0 client support"),
-    ("input-vsync-sampling.patch", "Sample batched input at vsync"),
-    ("bluetooth-a2dp-close-policy.patch", "Bluetooth stream close compatibility"),
-):
-    patch = device / "patches" / filename
-    command = ["git", "-C", str(source), "apply"]
-    check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
-    if check.returncode == 0:
-        subprocess.run(command + [str(patch)], check=True)
-        print(description + ": applied")
-    else:
-        subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-        print(description + ": already applied")
+apply_patch("build/make", "build-make-native-vendor.patch", "build/make: native vendor image helpers")
+apply_patch("external/minigbm", "minigbm-simpledrm.patch", "minigbm: simpledrm backend support")
+apply_patch("system/core", "init-block-device-lookup.patch", "init: block device lookup")
+apply_patch("system/core", "init-huawei-bootdevice-links.patch", "init: Huawei bootdevice links")
+apply_patch("system/vold", "vold-optional-metadata.patch", "vold: optional metadata partition")
+apply_patch("system/vold", "vold-legacy-keyring.patch", "vold: fscrypt v1 keyring support")
+apply_patch("frameworks/opt/telephony", "legacy-radio-hal11.patch", "Telephony: Radio HAL 1.1 support")
+apply_patch("", "audio-hal4-client.patch", "Audio HAL 4.0 client support")
+apply_patch("", "input-vsync-sampling.patch", "Sample batched input at vsync")
+apply_patch("", "bluetooth-a2dp-close-policy.patch", "Bluetooth stream close compatibility")

@@ -1,0 +1,113 @@
+diff --git a/core/Makefile b/core/Makefile
+index 65c45cb..becad58 100644
+--- a/core/Makefile
++++ b/core/Makefile
+@@ -2175,7 +2175,7 @@ INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
+ # $(2) the image prop file
+ define add-common-flags-to-image-props
+ $(eval _var := $(call to-upper,$(1)))
+-$(hide) echo "$(1)_selinux_fc=$(SELINUX_FC)" >> $(2)
++$(hide) echo "$(1)_selinux_fc=$(or $(BOARD_$(_var)IMAGE_SELINUX_FILE_CONTEXTS),$(SELINUX_FC))" >> $(2)
+ $(hide) echo "building_$(1)_image=$(BUILDING_$(_var)_IMAGE)" >> $(2)
+ endef
+ 
+@@ -4196,6 +4196,13 @@ $(call define declare-0p-target,$(vendor_linker_config_file),)
+ INTERNAL_VENDORIMAGE_FILES += $(vendor_linker_config_file)
+ ALL_DEFAULT_INSTALLED_MODULES += $(vendor_linker_config_file)
+ 
++# Device-relative files omitted from the vendor payload.
++ifneq ($(strip $(BOARD_VENDORIMAGE_EXCLUDED_FILES)),)
++INTERNAL_VENDORIMAGE_FILES := $(filter-out \
++    $(addprefix $(TARGET_OUT_VENDOR)/,$(BOARD_VENDORIMAGE_EXCLUDED_FILES)), \
++    $(INTERNAL_VENDORIMAGE_FILES))
++endif
++
+ INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
+ INSTALLED_FILES_JSON_VENDOR := $(INSTALLED_FILES_FILE_VENDOR:.txt=.json)
+ $(INSTALLED_FILES_FILE_VENDOR): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_VENDOR)
+@@ -4220,6 +4227,8 @@ define build-vendorimage-target
+   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
+       $(BUILD_IMAGE) \
+           $(if $(BUILD_BROKEN_INCORRECT_PARTITION_IMAGES),,--input-directory-filter-file $(vendorimage_intermediates)/file_list.txt) \
++          $(if $(BOARD_VENDORIMAGE_HARDLINKS),--input-directory-hardlinks $(BOARD_VENDORIMAGE_HARDLINKS)) \
++          $(if $(BOARD_VENDORIMAGE_POST_PROCESS_CMD),--input-directory-post-process "$(BOARD_VENDORIMAGE_POST_PROCESS_CMD)") \
+           $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt \
+           $(INSTALLED_VENDORIMAGE_TARGET) $(TARGET_OUT)
+   $(call assert-max-image-size,$(INSTALLED_VENDORIMAGE_TARGET) $(RECOVERY_FROM_BOOT_PATCH),$(BOARD_VENDORIMAGE_PARTITION_SIZE))
+@@ -4233,7 +4242,7 @@ $(vendorimage_intermediates)/staging_dir.stamp: $(filter $(TARGET_OUT_VENDOR)/%,
+ # We just build this directly to the install location.
+ INSTALLED_VENDORIMAGE_TARGET := $(BUILT_VENDORIMAGE_TARGET)
+ $(INSTALLED_VENDORIMAGE_TARGET): \
+-    $(INTERNAL_USERIMAGES_DEPS) \
++    $(INTERNAL_USERIMAGES_DEPS) $(BOARD_VENDORIMAGE_SELINUX_FILE_CONTEXTS) $(BOARD_VENDORIMAGE_HARDLINKS) $(BOARD_VENDORIMAGE_POST_PROCESS_DEPS) \
+     $(INTERNAL_VENDORIMAGE_FILES) \
+     $(INSTALLED_FILES_FILE_VENDOR) \
+     $(RECOVERY_FROM_BOOT_PATCH) \
+diff --git a/tools/releasetools/build_image.py b/tools/releasetools/build_image.py
+index 4d59cee..0beada3 100755
+--- a/tools/releasetools/build_image.py
++++ b/tools/releasetools/build_image.py
+@@ -26,6 +26,9 @@ import datetime
+ 
+ import argparse
+ import glob
++import filecmp
++import shlex
++import subprocess
+ import logging
+ import os
+ import os.path
+@@ -956,6 +959,23 @@ def CopyInputDirectory(src, dst, filter_file):
+         os.link(full_src, full_dst, follow_symlinks=False)
+ 
+ 
++def ApplyStagingHardlinks(staging_directory, manifest):
++  """Share storage for identical files with matching filesystem metadata."""
++  with open(manifest) as entries:
++    for entry in entries:
++      source, destination = entry.rstrip("\n").split("\t")
++      for path in (source, destination):
++        if path != os.path.normpath(path) or path in (".", "..") or path.startswith(("/", "../")):
++          raise ValueError(f"Invalid hardlink path: {path}")
++      source = os.path.join(staging_directory, source)
++      destination = os.path.join(staging_directory, destination)
++      if (source == destination or os.path.islink(source) or os.path.islink(destination)
++          or not filecmp.cmp(source, destination, shallow=False)):
++        raise ValueError(f"Image hardlink files differ: {source}, {destination}")
++      os.unlink(destination)
++      os.link(source, destination)
++
++
+ def main(argv):
+   parser = argparse.ArgumentParser(
+     description="Builds output_image from the given input_directory and properties_file, and "
+@@ -967,6 +987,10 @@ def main(argv):
+     "will install in by default, so there could be files in the input_directory that are not "
+     "actually supposed to be part of the partition. The paths in this file must be relative to "
+     "input_directory.")
++  parser.add_argument("--input-directory-hardlinks",
++    help="tab-separated list of identical files to hardlink in the filtered staging directory")
++  parser.add_argument("--input-directory-post-process",
++    help="command invoked with <input_dir> <staging_dir> after filtering and hardlinking")
+   parser.add_argument("input_directory",
+     help="the staging directory to be converted to an image file")
+   parser.add_argument("properties_file",
+@@ -1030,8 +1054,18 @@ def main(argv):
+   if args.input_directory_filter_file and not os.environ.get("BUILD_BROKEN_INCORRECT_PARTITION_IMAGES"):
+     with tempfile.TemporaryDirectory(dir=os.path.dirname(args.input_directory)) as new_input_directory:
+       CopyInputDirectory(args.input_directory, new_input_directory, args.input_directory_filter_file)
++      if args.input_directory_hardlinks:
++        ApplyStagingHardlinks(new_input_directory, args.input_directory_hardlinks)
++      if args.input_directory_post_process:
++        cmd = shlex.split(args.input_directory_post_process) + [
++            args.input_directory, new_input_directory]
++        subprocess.run(cmd, check=True)
+       BuildImageOrVBMeta(new_input_directory, args.target_out, glob_dict, image_properties, args.out_file)
+   else:
++    if args.input_directory_hardlinks:
++      parser.error("--input-directory-hardlinks requires a filtered staging directory")
++    if args.input_directory_post_process:
++      parser.error("--input-directory-post-process requires a filtered staging directory")
+     BuildImageOrVBMeta(args.input_directory, args.target_out, glob_dict, image_properties, args.out_file)
+ 
+ 

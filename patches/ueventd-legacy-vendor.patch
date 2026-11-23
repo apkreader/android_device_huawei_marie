@@ -1,6 +1,0 @@
---- a/rootdir/ueventd.rc
-+++ b/rootdir/ueventd.rc
-@@ -1,2 +1,3 @@
- import /vendor/etc/ueventd.rc
-+import /vendor/ueventd.rc
- import /odm/etc/ueventd.rc
