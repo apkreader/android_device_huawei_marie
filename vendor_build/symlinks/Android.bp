@@ -1,0 +1,1063 @@
+install_symlink {
+    name: "marie_vendor_symlink_0",
+    vendor: true,
+    installed_location: "bin/acpi",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_1",
+    vendor: true,
+    installed_location: "bin/base64",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_2",
+    vendor: true,
+    installed_location: "bin/basename",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_3",
+    vendor: true,
+    installed_location: "bin/blockdev",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_4",
+    vendor: true,
+    installed_location: "bin/cal",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_5",
+    vendor: true,
+    installed_location: "bin/cat",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_6",
+    vendor: true,
+    installed_location: "bin/chcon",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_7",
+    vendor: true,
+    installed_location: "bin/chgrp",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_8",
+    vendor: true,
+    installed_location: "bin/chmod",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_9",
+    vendor: true,
+    installed_location: "bin/chown",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_10",
+    vendor: true,
+    installed_location: "bin/chroot",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_11",
+    vendor: true,
+    installed_location: "bin/chrt",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_12",
+    vendor: true,
+    installed_location: "bin/cksum",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_13",
+    vendor: true,
+    installed_location: "bin/clear",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_14",
+    vendor: true,
+    installed_location: "bin/cmp",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_15",
+    vendor: true,
+    installed_location: "bin/comm",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_16",
+    vendor: true,
+    installed_location: "bin/cp",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_17",
+    vendor: true,
+    installed_location: "bin/cpio",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_18",
+    vendor: true,
+    installed_location: "bin/cut",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_19",
+    vendor: true,
+    installed_location: "bin/date",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_21",
+    vendor: true,
+    installed_location: "bin/df",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_22",
+    vendor: true,
+    installed_location: "bin/diff",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_23",
+    vendor: true,
+    installed_location: "bin/dirname",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_24",
+    vendor: true,
+    installed_location: "bin/dmesg",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_25",
+    vendor: true,
+    installed_location: "bin/dos2unix",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_26",
+    vendor: true,
+    installed_location: "bin/du",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_27",
+    vendor: true,
+    installed_location: "bin/echo",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_29",
+    vendor: true,
+    installed_location: "bin/env",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_30",
+    vendor: true,
+    installed_location: "bin/expand",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_31",
+    vendor: true,
+    installed_location: "bin/expr",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_32",
+    vendor: true,
+    installed_location: "bin/fallocate",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_33",
+    vendor: true,
+    installed_location: "bin/false",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_35",
+    vendor: true,
+    installed_location: "bin/file",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_36",
+    vendor: true,
+    installed_location: "bin/find",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_37",
+    vendor: true,
+    installed_location: "bin/flock",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_38",
+    vendor: true,
+    installed_location: "bin/fmt",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_39",
+    vendor: true,
+    installed_location: "bin/free",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_40",
+    vendor: true,
+    installed_location: "bin/getenforce",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_41",
+    vendor: true,
+    installed_location: "bin/getevent",
+    symlink_target: "toolbox",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_42",
+    vendor: true,
+    installed_location: "bin/getprop",
+    symlink_target: "toolbox",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_43",
+    vendor: true,
+    installed_location: "bin/groups",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_44",
+    vendor: true,
+    installed_location: "bin/gunzip",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_45",
+    vendor: true,
+    installed_location: "bin/gzip",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_46",
+    vendor: true,
+    installed_location: "bin/head",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_47",
+    vendor: true,
+    installed_location: "bin/hostname",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_48",
+    vendor: true,
+    installed_location: "bin/hwclock",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_49",
+    vendor: true,
+    installed_location: "bin/id",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_50",
+    vendor: true,
+    installed_location: "bin/ifconfig",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_51",
+    vendor: true,
+    installed_location: "bin/inotifyd",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_52",
+    vendor: true,
+    installed_location: "bin/insmod",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_53",
+    vendor: true,
+    installed_location: "bin/ionice",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_54",
+    vendor: true,
+    installed_location: "bin/iorenice",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_55",
+    vendor: true,
+    installed_location: "bin/kill",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_56",
+    vendor: true,
+    installed_location: "bin/killall",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_57",
+    vendor: true,
+    installed_location: "bin/ln",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_58",
+    vendor: true,
+    installed_location: "bin/load_policy",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_59",
+    vendor: true,
+    installed_location: "bin/log",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_60",
+    vendor: true,
+    installed_location: "bin/logname",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_61",
+    vendor: true,
+    installed_location: "bin/losetup",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_62",
+    vendor: true,
+    installed_location: "bin/ls",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_63",
+    vendor: true,
+    installed_location: "bin/lsmod",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_64",
+    vendor: true,
+    installed_location: "bin/lsof",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_65",
+    vendor: true,
+    installed_location: "bin/lspci",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_66",
+    vendor: true,
+    installed_location: "bin/lsusb",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_67",
+    vendor: true,
+    installed_location: "bin/md5sum",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_68",
+    vendor: true,
+    installed_location: "bin/microcom",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_69",
+    vendor: true,
+    installed_location: "bin/mkdir",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_70",
+    vendor: true,
+    installed_location: "bin/mkfifo",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_71",
+    vendor: true,
+    installed_location: "bin/mknod",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_72",
+    vendor: true,
+    installed_location: "bin/mkswap",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_73",
+    vendor: true,
+    installed_location: "bin/mktemp",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_74",
+    vendor: true,
+    installed_location: "bin/modinfo",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_76",
+    vendor: true,
+    installed_location: "bin/more",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_77",
+    vendor: true,
+    installed_location: "bin/mount",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_78",
+    vendor: true,
+    installed_location: "bin/mountpoint",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_79",
+    vendor: true,
+    installed_location: "bin/mv",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_80",
+    vendor: true,
+    installed_location: "bin/netstat",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_81",
+    vendor: true,
+    installed_location: "bin/newfs_msdos",
+    symlink_target: "toolbox",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_82",
+    vendor: true,
+    installed_location: "bin/nice",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_83",
+    vendor: true,
+    installed_location: "bin/nl",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_84",
+    vendor: true,
+    installed_location: "bin/nohup",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_85",
+    vendor: true,
+    installed_location: "bin/od",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_86",
+    vendor: true,
+    installed_location: "bin/paste",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_87",
+    vendor: true,
+    installed_location: "bin/patch",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_88",
+    vendor: true,
+    installed_location: "bin/pgrep",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_89",
+    vendor: true,
+    installed_location: "bin/pidof",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_90",
+    vendor: true,
+    installed_location: "bin/pkill",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_91",
+    vendor: true,
+    installed_location: "bin/pmap",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_92",
+    vendor: true,
+    installed_location: "bin/printenv",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_93",
+    vendor: true,
+    installed_location: "bin/printf",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_94",
+    vendor: true,
+    installed_location: "bin/ps",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_95",
+    vendor: true,
+    installed_location: "bin/pwd",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_96",
+    vendor: true,
+    installed_location: "bin/readlink",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_97",
+    vendor: true,
+    installed_location: "bin/realpath",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_98",
+    vendor: true,
+    installed_location: "bin/renice",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_99",
+    vendor: true,
+    installed_location: "bin/restorecon",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_100",
+    vendor: true,
+    installed_location: "bin/rm",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_101",
+    vendor: true,
+    installed_location: "bin/rmdir",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_102",
+    vendor: true,
+    installed_location: "bin/rmmod",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_103",
+    vendor: true,
+    installed_location: "bin/runcon",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_104",
+    vendor: true,
+    installed_location: "bin/sed",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_105",
+    vendor: true,
+    installed_location: "bin/sendevent",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_106",
+    vendor: true,
+    installed_location: "bin/seq",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_107",
+    vendor: true,
+    installed_location: "bin/setenforce",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_109",
+    vendor: true,
+    installed_location: "bin/setsid",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_110",
+    vendor: true,
+    installed_location: "bin/sha1sum",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_111",
+    vendor: true,
+    installed_location: "bin/sha224sum",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_112",
+    vendor: true,
+    installed_location: "bin/sha256sum",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_113",
+    vendor: true,
+    installed_location: "bin/sha384sum",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_114",
+    vendor: true,
+    installed_location: "bin/sha512sum",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_115",
+    vendor: true,
+    installed_location: "bin/sleep",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_116",
+    vendor: true,
+    installed_location: "bin/sort",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_117",
+    vendor: true,
+    installed_location: "bin/split",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_119",
+    vendor: true,
+    installed_location: "bin/stat",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_121",
+    vendor: true,
+    installed_location: "bin/strings",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_122",
+    vendor: true,
+    installed_location: "bin/stty",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_123",
+    vendor: true,
+    installed_location: "bin/swapoff",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_124",
+    vendor: true,
+    installed_location: "bin/swapon",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_125",
+    vendor: true,
+    installed_location: "bin/sync",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_126",
+    vendor: true,
+    installed_location: "bin/sysctl",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_127",
+    vendor: true,
+    installed_location: "bin/tac",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_128",
+    vendor: true,
+    installed_location: "bin/tail",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_129",
+    vendor: true,
+    installed_location: "bin/tar",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_130",
+    vendor: true,
+    installed_location: "bin/taskset",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_131",
+    vendor: true,
+    installed_location: "bin/tee",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_132",
+    vendor: true,
+    installed_location: "bin/time",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_133",
+    vendor: true,
+    installed_location: "bin/timeout",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_134",
+    vendor: true,
+    installed_location: "bin/top",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_135",
+    vendor: true,
+    installed_location: "bin/touch",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_136",
+    vendor: true,
+    installed_location: "bin/tr",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_137",
+    vendor: true,
+    installed_location: "bin/true",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_138",
+    vendor: true,
+    installed_location: "bin/truncate",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_139",
+    vendor: true,
+    installed_location: "bin/tty",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_140",
+    vendor: true,
+    installed_location: "bin/ulimit",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_141",
+    vendor: true,
+    installed_location: "bin/umount",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_142",
+    vendor: true,
+    installed_location: "bin/uname",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_143",
+    vendor: true,
+    installed_location: "bin/uniq",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_144",
+    vendor: true,
+    installed_location: "bin/unix2dos",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_145",
+    vendor: true,
+    installed_location: "bin/uptime",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_146",
+    vendor: true,
+    installed_location: "bin/usleep",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_147",
+    vendor: true,
+    installed_location: "bin/uudecode",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_148",
+    vendor: true,
+    installed_location: "bin/uuencode",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_149",
+    vendor: true,
+    installed_location: "bin/vmstat",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_150",
+    vendor: true,
+    installed_location: "bin/wc",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_151",
+    vendor: true,
+    installed_location: "bin/which",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_152",
+    vendor: true,
+    installed_location: "bin/whoami",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_153",
+    vendor: true,
+    installed_location: "bin/xargs",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_154",
+    vendor: true,
+    installed_location: "bin/xxd",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_155",
+    vendor: true,
+    installed_location: "bin/yes",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_156",
+    vendor: true,
+    installed_location: "bin/zcat",
+    symlink_target: "toybox_vendor",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_157",
+    vendor: true,
+    installed_location: "lib/hw/vulkan.kirin710.so",
+    symlink_target: "../egl/libGLES_mali.so",
+}
+
+install_symlink {
+    name: "marie_vendor_symlink_158",
+    vendor: true,
+    installed_location: "lib64/hw/vulkan.kirin710.so",
+    symlink_target: "../egl/libGLES_mali.so",
+}
