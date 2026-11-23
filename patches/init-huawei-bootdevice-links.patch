@@ -1,0 +1,15 @@
+diff --git a/init/devices.cpp b/init/devices.cpp
+index e27de64..552a401 100644
+--- a/init/devices.cpp
++++ b/init/devices.cpp
+@@ -568,6 +568,10 @@ std::vector<std::string> DeviceHandler::GetBlockDeviceSymlinks(const Uevent& uev
+         // Adds symlink: /dev/block/by-name/<partition_name>.
+         if (info.is_boot_device) {
+             links.emplace_back("/dev/block/by-name/" + partition_name_sanitized);
++            // Huawei vendor file contexts and daemons use the legacy bootdevice path.
++            if (info.type == "platform" && info.str == "ff3c0000.ufs") {
++                links.emplace_back("/dev/block/bootdevice/by-name/" + partition_name_sanitized);
++            }
+         }
+     } else if (info.is_boot_device) {
+         // If we don't have a partition name but we are a partition on a boot device, create a

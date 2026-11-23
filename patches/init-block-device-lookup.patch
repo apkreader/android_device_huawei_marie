@@ -1,0 +1,40 @@
+diff --git a/init/mount_handler.cpp b/init/mount_handler.cpp
+index 227ce2f..d91f72f 100644
+--- a/init/mount_handler.cpp
++++ b/init/mount_handler.cpp
+@@ -94,10 +94,12 @@ std::string GetRootDisk(std::string blockdev) {
+     if (blockdev.find('/') != std::string::npos) return {};
+ 
+     std::error_code ec;
+-    for (const auto& entry : std::filesystem::directory_iterator("/sys/block", ec)) {
+-        const std::string path = entry.path().string();
+-        if (std::filesystem::exists(StringPrintf("%s/%s", path.c_str(), blockdev.c_str()))) {
+-            return Basename(path);
++    const std::filesystem::directory_iterator end;
++    for (std::filesystem::directory_iterator it("/sys/block", ec); it != end; it.increment(ec)) {
++        const auto& path = it->path();
++        std::error_code status_error;
++        if (std::filesystem::exists(path / blockdev, status_error)) {
++            return path.filename().string();
+         }
+     }
+     return {};
+@@ -108,15 +110,14 @@ void SetMountProperty(const MountHandlerEntry& entry, bool add) {
+     if (!android::base::StartsWith(entry.blk_device, devblock)) return;
+     auto target = entry.blk_device.substr(strlen(devblock));
+     std::string diskpart, rootdisk;
+-    if (add) {
++    // APEX and loop mounts do not name a physical root disk.
++    if (add && !android::base::StartsWith(target, "loop") &&
++        !android::base::StartsWith(entry.mount_point, "/apex/")) {
+         diskpart = GetDiskPart(target);
+         rootdisk = GetRootDisk(diskpart);
+ 
+         struct stat sb;
+         if (stat(entry.mount_point.c_str(), &sb) || !S_ISDIR(sb.st_mode)) rootdisk = "";
+-        // Clear the noise associated with loopback and APEX.
+-        if (android::base::StartsWith(target, "loop")) rootdisk = "";
+-        if (android::base::StartsWith(entry.mount_point, "/apex/")) rootdisk = "";
+     }
+     auto mount_prop = entry.mount_point;
+     if (mount_prop == "/") mount_prop = "/root";

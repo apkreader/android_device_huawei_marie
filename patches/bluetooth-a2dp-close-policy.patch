@@ -1,0 +1,14 @@
+--- a/packages/modules/Bluetooth/system/bta/av/bta_av_aact.cc
++++ b/packages/modules/Bluetooth/system/bta/av/bta_av_aact.cc
+@@ -2448,7 +2448,10 @@
+   log::warn("peer {} bta_handle:0x{:x} open_status:{} chnl:{} co_started:{}", p_scb->PeerAddress(),
+             p_scb->hndl, p_scb->open_status, p_scb->chnl, p_scb->co_started);
+ 
+-  BTM_unblock_role_switch_and_sniff_mode_for(p_scb->PeerAddress());
++  // Some controllers time out on Write Link Policy Settings during stream teardown.
++  if (osi_property_get_bool("bluetooth.a2dp.restore_link_policy_on_close", true)) {
++    BTM_unblock_role_switch_and_sniff_mode_for(p_scb->PeerAddress());
++  }
+   stack::l2cap::get_interface().L2CA_SetMediaStreamChannel(p_scb->l2c_cid, false);
+ 
+   if (p_scb->open_status != BTA_AV_SUCCESS) {
