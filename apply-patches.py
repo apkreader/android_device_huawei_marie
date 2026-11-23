@@ -4,6 +4,7 @@
 
 from pathlib import Path
 import hashlib
+import os
 import subprocess
 
 
@@ -30,42 +31,33 @@ elif current == original:
 else:
     raise SystemExit("VNDK 28 Android.bp has other changes; the build fix was not applied")
 
-target = source / "system/core"
-patch = device / "patches/ueventd-legacy-vendor.patch"
-command = ["git", "-C", str(target), "apply"]
-legacy_imports = (target / "rootdir/ueventd.rc").read_text().splitlines().count(
-    "import /vendor/ueventd.rc")
-if legacy_imports == 0:
-    subprocess.run(command + ["--check", str(patch)], check=True)
-    subprocess.run(command + [str(patch)], check=True)
-    print("ueventd: importing EMUI vendor rules")
-elif legacy_imports == 1:
-    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-    print("ueventd: EMUI vendor import already applied")
-else:
-    raise SystemExit("ueventd.rc contains duplicate legacy vendor imports")
+native_vendor = os.environ.get("MARIE_NATIVE_VENDOR") == "true"
 
-target = source / "vendor/lineage"
-patch = device / "patches/kernel-modules-image-dependency.patch"
-command = ["git", "-C", str(target), "apply"]
-check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
-if check.returncode == 0:
-    subprocess.run(command + [str(patch)], check=True)
-    print("Kernel modules: system image waits for module installation")
-else:
-    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-    print("Kernel modules: image dependency already applied")
+
+def set_legacy_patch(project, filename, strip=1):
+    patch = device / "patches" / filename
+    command = ["git", "-C", str(source / project), "apply", f"-p{strip}"]
+    desired = ["--reverse"] if native_vendor else []
+    opposite = [] if native_vendor else ["--reverse"]
+    if subprocess.run(command + desired + ["--check", str(patch)], capture_output=True).returncode == 0:
+        subprocess.run(command + desired + [str(patch)], check=True)
+    else:
+        subprocess.run(command + opposite + ["--check", str(patch)], check=True)
+
+
+set_legacy_patch("system/core", "ueventd-legacy-vendor.patch")
+set_legacy_patch("frameworks/base", "hintmanager-legacy-power-hal.patch", strip=3)
 
 target = source / "system/core"
-patch = device / "patches/cpuset-legacy-mount.patch"
 command = ["git", "-C", str(target), "apply"]
-check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
-if check.returncode == 0:
-    subprocess.run(command + [str(patch)], check=True)
-    print("cpuset: retrying unsupported mount options on legacy kernels")
-else:
-    subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
-    print("cpuset: legacy mount compatibility already applied")
+
+for filename in ("init-block-device-lookup.patch", "init-huawei-bootdevice-links.patch"):
+    patch = device / "patches" / filename
+    check = subprocess.run(command + ["--check", str(patch)], capture_output=True)
+    if check.returncode == 0:
+        subprocess.run(command + [str(patch)], check=True)
+    else:
+        subprocess.run(command + ["--reverse", "--check", str(patch)], check=True)
 
 target = source / "system/vold"
 patch = device / "patches/vold-optional-metadata.patch"
@@ -101,9 +93,8 @@ else:
 
 for filename, description in (
     ("audio-hal4-client.patch", "Audio HAL 4.0 client support"),
-    ("hintmanager-legacy-power-hal.patch", "HintManager fallback without AIDL Power HAL"),
-    ("libmeminfo-optional-gpu-map.patch", "Optional GPU memory statistics"),
     ("input-vsync-sampling.patch", "Sample batched input at vsync"),
+    ("bluetooth-a2dp-close-policy.patch", "Bluetooth stream close compatibility"),
 ):
     patch = device / "patches" / filename
     command = ["git", "-C", str(source), "apply"]
