@@ -8,6 +8,8 @@ PRODUCT_EXTRA_VNDK_VERSIONS += 28
 
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 $(call inherit-product, vendor/huawei/marie/marie-vendor.mk)
+$(call inherit-product, vendor/huawei/marie/mesa/mesa.mk)
+$(call inherit-product, $(LOCAL_PATH)/vendor_build/symlinks.mk)
 
 # Normal boot images belong on the Huawei kernel partition.
 PRODUCT_BUILD_BOOT_IMAGE := true
@@ -22,12 +24,7 @@ PRODUCT_BUILD_RECOVERY_IMAGE := false
 endif
 PRODUCT_BUILD_VENDOR_BOOT_IMAGE := false
 PRODUCT_BUILD_INIT_BOOT_IMAGE := false
-ifeq ($(MARIE_NATIVE_VENDOR),true)
 PRODUCT_BUILD_VENDOR_IMAGE := true
-$(call inherit-product, vendor/huawei/marie_native/marie_native-vendor.mk)
-else
-PRODUCT_BUILD_VENDOR_IMAGE := false
-endif
 PRODUCT_BUILD_ODM_IMAGE := false
 PRODUCT_BUILD_SYSTEM_EXT_IMAGE := false
 
@@ -71,19 +68,34 @@ PRODUCT_SYSTEM_PROPERTIES += \
     debug.sf.earlyGl.app.duration=16600000 \
     persist.radio.multisim.config=dsds
 
+# Init, fstab, cgroups, and SELinux mapping
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/fstab.kirin710:$(TARGET_COPY_OUT_RAMDISK)/fstab.kirin710 \
     $(LOCAL_PATH)/configs/init.marie.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.rc \
     $(LOCAL_PATH)/configs/init.marie.usb.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.usb.rc \
     $(LOCAL_PATH)/configs/cgroups.json:$(TARGET_COPY_OUT_VENDOR)/etc/cgroups.json \
     $(LOCAL_PATH)/configs/task_profiles.json:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/task_profiles.json \
+    $(LOCAL_PATH)/configs/vendor.huawei.hardware.wifi@1.1-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.huawei.hardware.wifi@1.1-service.rc \
     $(LOCAL_PATH)/sepolicy/mapping/28.0.cil:$(TARGET_COPY_OUT_SYSTEM)/etc/selinux/mapping/28.0.cil
 
-PRODUCT_PACKAGES += framework_compatibility_matrix.3.xml
-
-PRODUCT_PACKAGES += \
-    android.hardware.lights-service.marie \
-    libwifi_fdsan_compat
-
+# Graphics HAL configs (HWC3 big-core affinity, Panfrost early-init, configstore seccomp, mapper service context)
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/vendor.huawei.hardware.wifi@1.1-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.huawei.hardware.wifi@1.1-service.rc
+    $(LOCAL_PATH)/graphics/marie-hwc3-drm.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/marie-hwc3-drm.rc \
+    $(LOCAL_PATH)/graphics/marie-panfrost.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/marie-panfrost.rc \
+    $(LOCAL_PATH)/graphics/configstore@1.1.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/configstore@1.1.policy \
+    $(LOCAL_PATH)/graphics/vendor_service_contexts:$(TARGET_COPY_OUT_VENDOR)/etc/selinux/vendor_service_contexts
+
+# VINTF & linker configuration
+PRODUCT_PACKAGES += framework_compatibility_matrix.3.xml
+PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS += $(LOCAL_PATH)/power/linker.config.json
+
+# Open-source HALs, shims, and Android 17 graphics/minijail stack built natively from source
+PRODUCT_PACKAGES += \
+    android.hardware.composer.hwc3-service.drm \
+    android.hardware.graphics.allocator-service.minigbm \
+    mapper.minigbm \
+    libdrm.vendor \
+    libminijail.vendor \
+    android.hardware.lights-service.marie \
+    android.hardware.power-service.marie \
+    libwifi_fdsan_compat

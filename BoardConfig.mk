@@ -53,6 +53,7 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 109051904
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 33554432
 BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_ODMIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
 TARGET_USERIMAGES_USE_EXT4 := true
@@ -60,6 +61,21 @@ TARGET_USERIMAGES_USE_F2FS := true
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_ODM := odm
 TARGET_COPY_OUT_PRODUCT := product
+
+# Native vendor image (EROFS + EMUI 9 VNDK 28 HALs + Android 17 HWC3/minigbm + Mesa Panfrost)
+VENDOR_SECURITY_PATCH := 2018-06-19
+BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := erofs
+BOARD_EROFS_USE_LEGACY_COMPRESSION := true
+BOARD_VENDORIMAGE_EROFS_COMPRESSOR := lz4hc,level=12
+BOARD_VENDORIMAGE_SELINUX_FILE_CONTEXTS := $(DEVICE_PATH)/vendor_build/vendor_file_contexts
+BOARD_VENDORIMAGE_HARDLINKS := $(DEVICE_PATH)/vendor_build/vendor-hardlinks.txt
+BOARD_VENDORIMAGE_POST_PROCESS_CMD := python3 $(DEVICE_PATH)/graphics/isolate-vndk28.py
+BOARD_VENDORIMAGE_POST_PROCESS_DEPS := $(DEVICE_PATH)/graphics/isolate-vndk28.py
+TARGET_FS_CONFIG_GEN += $(DEVICE_PATH)/vendor_build/config.fs
+TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor_build/vendor.prop
+include $(DEVICE_PATH)/vendor_build/vendor-vndk28.mk
 
 # Huawei loads recovery from recovery_ramdisk with a separate kernel.
 ifeq ($(MARIE_BUILD_RECOVERY),true)
@@ -77,17 +93,3 @@ BOARD_ROOT_EXTRA_FOLDERS += sec_storage metadata
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 
 include vendor/huawei/marie/BoardConfigVendor.mk
-
-ifeq ($(MARIE_NATIVE_VENDOR),true)
-$(call soong_config_set_bool,marie_native_vendor,enabled,true)
-VENDOR_SECURITY_PATCH := 2018-06-19
-BUILD_BROKEN_DUP_RULES := true
-BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
-BOARD_PREBUILT_VENDORIMAGE :=
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := erofs
-BOARD_EROFS_USE_LEGACY_COMPRESSION := true
-BOARD_VENDORIMAGE_EROFS_COMPRESSOR := lz4hc,level=12
-TARGET_FS_CONFIG_GEN += device/huawei/marie_native/config.fs
-TARGET_VENDOR_PROP += device/huawei/marie_native/vendor.prop
-include device/huawei/marie_native/vendor-vndk28.mk
-endif
