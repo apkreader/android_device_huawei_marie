@@ -5,8 +5,9 @@ kernel port.
 
 Huawei's stock kernel is stuck on Android 9 / Linux 4.9, so this tree replaces
 it with a Linux 6.12 kernel (`lineage24-6.12.y`) and builds the full ROM —
-including `vendor.img`, HWC3/minigbm, `libminijail`, and the kernel — natively
-through LineageOS (`breakfast marie && mka`).
+including `vendor.img`, HWC3/minigbm, AIDL Wi-Fi (`IWifi`, `wpa_supplicant`,
+`hostapd`), `libminijail`, and the kernel — natively through LineageOS
+(`breakfast marie && mka`).
 
 ## Status
 
@@ -18,6 +19,9 @@ Working on Linux 6.12 (cold-boot SELinux Enforcing):
 - **GPU**: Mali-G51 hardware acceleration via Linux 6.12 `panfrost` + Mesa
   24.3.4 Gallium Panfrost (OpenGL ES 3.1 + EGL, ACE-Lite coherency,
   413–999 MHz `devfreq`)
+- **Wi-Fi**: Hi1102 dual-band 2.4/5 GHz 802.11ac via Linux 6.12 `cfg80211`
+  driver port with Android 17 AIDL `IWifi` HAL, `wpa_supplicant` v2.12
+  (WPA3-SAE & WPA2-PSK), and `hostapd`
 - **CPU / Power**: 8-core SMP (4 x Cortex-A73 + 4 x Cortex-A53) with Kirin 710
   `cpufreq`, AIDL Power HAL, HI6555v200 PMIC battery/USB charging, power/volume
   keys, PMIC `reboot-mode`
@@ -30,8 +34,7 @@ Working on Linux 6.12 (cold-boot SELinux Enforcing):
 
 Still work in progress on Linux 6.12:
 
-- **Wi-Fi & Bluetooth**: Needs a new/ported `hi1102a` driver (targeting modern
-  `cfg80211` with WPA3-SAE support since Huawei's old 4.9 driver lacks WPA3)
+- **Bluetooth**: Hi1102 BFGX Bluetooth bring-up
 - **Baseband / RIL**: Balong modem driver port
 - **Audio, Vibration, Flashlight, Camera, Sensors, microSD**
 
