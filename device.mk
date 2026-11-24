@@ -74,7 +74,8 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/init.marie.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.rc \
     $(LOCAL_PATH)/configs/init.marie.usb.rc:$(TARGET_COPY_OUT_SYSTEM)/etc/init/init.marie.usb.rc \
     $(LOCAL_PATH)/configs/task_profiles.json:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/task_profiles.json \
-    $(LOCAL_PATH)/configs/vendor.huawei.hardware.wifi@1.1-service.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/vendor.huawei.hardware.wifi@1.1-service.rc \
+    $(LOCAL_PATH)/configs/wpa_supplicant.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant.conf \
+    $(LOCAL_PATH)/configs/wpa_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant_overlay.conf \
     $(LOCAL_PATH)/sepolicy/mapping/28.0.cil:$(TARGET_COPY_OUT_SYSTEM)/etc/selinux/mapping/28.0.cil
 
 # Graphics HAL configs (HWC3 big-core affinity, Panfrost early-init, configstore seccomp, mapper service context)
@@ -97,4 +98,6 @@ PRODUCT_PACKAGES += \
     libminijail.vendor \
     android.hardware.lights-service.marie \
     android.hardware.power-service.marie \
-    libwifi_fdsan_compat
+    android.hardware.wifi-service \
+    wpa_supplicant \
+    hostapd

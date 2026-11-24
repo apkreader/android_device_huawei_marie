@@ -76,3 +76,4 @@
 (allow hivrar hwservicemanager_prop_28_0 (file (map)))
 (allow domain ashmem_libcutils_device (chr_file (open)))
 (genfscon sysfs /devices/virtual/leds/lcd_backlight0 (u object_r sysfs_leds ((s0) (s0))))
+(allow hal_wifi_default self (netlink_route_socket (create bind getattr setattr lock append read write getopt setopt shutdown nlmsg_read nlmsg_write)))

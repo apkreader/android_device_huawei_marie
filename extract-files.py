@@ -58,12 +58,15 @@ def stock_name(lib, partition):
 # The 28.0 mapping translates the old vfat label. The platform labels fuseblk.
 perf_event_permission = r'(\((?:capability2|cap2_userns)\s+\([^)]*)\bperf_event\b'
 blob_fixups = {
-    'vendor/bin/hw/vendor.huawei.hardware.wifi@1.1-service': blob_fixup()
-    .add_needed('libwifi_fdsan_compat.so'),
     'vendor/etc/Default_sched_config_cust.xml': blob_fixup()
     .regex_replace(r'^<\?xml version="3\.0"', '<?xml version="1.0"'),
     'vendor/etc/init/android.hardware.bluetooth@1.0-service.rc': blob_fixup()
     .regex_replace(r'(?m)^([ \t]*)//', r'\g<1>#'),
+    'vendor/etc/init/connectivity/init.connectivity.hi1102.rc': blob_fixup()
+    .regex_replace(
+        r'(?m)^service (?:wpa_supplicant|hostapd) /[\s\S]*?(?=\n(?:service |on |#|$))',
+        '',
+    ),
     'vendor/etc/selinux/vendor_file_contexts': blob_fixup()
     .call(append_marie612_fc),
     'vendor/etc/selinux/plat_pub_versioned.cil': blob_fixup()
@@ -71,7 +74,8 @@ blob_fixups = {
     'vendor/etc/vintf/manifest.xml': blob_fixup()
     .regex_replace(
         r'    <hal format="hidl">\n'
-        r'        <name>android\.hardware\.graphics\.(?:allocator|composer|mapper)</name>'
+        r'        <name>(?:android\.hardware\.graphics\.(?:allocator|composer|mapper)'
+        r'|(?:android|vendor\.huawei)\.hardware\.wifi(?:\.hostapd|\.supplicant)?)</name>'
         r'[\s\S]*?    </hal>\n',
         '',
     ),
@@ -124,7 +128,6 @@ suffixed_modules = (
     'camera.device@3.4-impl',
     'cplay',
     'gralloc.default',
-    'hostapd',
     'libLLVM_android',
     'libOpenCL',
     'libalsautils',
@@ -144,8 +147,6 @@ suffixed_modules = (
     'libhwc2onfbadapter',
     'libhwminijail',
     'libkeymaster3device',
-    'libkeystore-engine-wifi-hidl',
-    'libkeystore-wifi-hidl',
     'libldnhncr',
     'libmockcasplugin',
     'libnbaio_mono',
@@ -156,9 +157,7 @@ suffixed_modules = (
     'libstdc++',
     'libtinycompress',
     'libvisualizer',
-    'libwifi-hal',
     'libwifi-hal-bcm',
-    'libwifi_fdsan_compat',
     'libwpa_client',
     'local_time.default',
     'power.default',
@@ -170,7 +169,6 @@ suffixed_modules = (
     'vndservice',
     'vndservicemanager',
     'wpa_cli',
-    'wpa_supplicant',
 )
 
 # Files kept in EMUI 9 OEM format via raw copy-one-file (avoids Soong init-rc
@@ -200,8 +198,6 @@ LEGACY_VENDOR_FILES = (
     'etc/modemConfig/observe_config_encryt.xml',
     'etc/native_packages.xml',
     'bin/hw/android.hardware.media.omx@1.0-service',
-    'bin/hw/wpa_supplicant',
-    'bin/hw/hostapd',
     'default.prop',
     'etc/vintf/compatibility_matrix.xml',
     'bin/awk',
@@ -244,7 +240,6 @@ MANIFEST_OVERRIDES = (
     'camera.device@3.4-impl',
     'cplay',
     'gralloc.default',
-    'hostapd_marie',
     'libLLVM_android.vendor',
     'libalsautils.vendor',
     'libavservices_minijail_vendor',
@@ -259,8 +254,6 @@ MANIFEST_OVERRIDES = (
     'libhwc2onfbadapter',
     'libhwminijail',
     'libkeymaster3device.vendor',
-    'libkeystore-engine-wifi-hidl',
-    'libkeystore-wifi-hidl',
     'libldnhncr',
     'libmockcasplugin',
     'libnbaio_mono',
@@ -269,14 +262,12 @@ MANIFEST_OVERRIDES = (
     'librilutils',
     'libtinycompress',
     'libvisualizer',
-    'libwifi-hal',
     'libwpa_client',
     'local_time.default',
     'power.default',
     'rild',
     'vibrator.default',
     'wpa_cli',
-    'wpa_supplicant',
 )
 
 vendor_lib_fixups = {

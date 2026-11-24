@@ -71,3 +71,9 @@ BOARD_VENDORIMAGE_EXCLUDED_FILES += \
 BOARD_VENDORIMAGE_EXCLUDED_FILES += \
     lib/libcap.so \
     lib64/libcap.so
+
+# Also exclude Android 17 Wi-Fi VNDK28-overlapping libs (isolated via *7.so for AIDL Wi-Fi HAL/supplicant/hostapd)
+BOARD_VENDORIMAGE_EXCLUDED_FILES += \
+    lib64/libssl.so \
+    lib64/libxml2.so \
+    lib64/libnl.so

@@ -58,7 +58,6 @@ vendor/bin/hiaiserver
 vendor/bin/hinetmanager
 vendor/bin/hisecd
 vendor/bin/hivwserver
-vendor/bin/hostapd_hisi
 vendor/bin/hw/android.hardware.bluetooth@1.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/android.hardware.cas@1.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/android.hardware.configstore@1.1-service;DISABLE_CHECKELF
@@ -74,7 +73,6 @@ vendor/bin/hw/android.hardware.memtrack@1.0-service;DISABLE_CHECKELF
 vendor/bin/hw/android.hardware.secure_element@1.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/android.hardware.thermal@1.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/android.hardware.usb@1.0-service;MODULE_SUFFIX=_marie
-vendor/bin/hw/hostapd;MODULE_SUFFIX=_marie
 vendor/bin/hw/rild;MODULE_SUFFIX=_marie
 vendor/bin/hw/vendor.huawei.hardware.audio@4.0-service;DISABLE_CHECKELF
 vendor/bin/hw/vendor.huawei.hardware.biometrics.fingerprint@2.1-service
@@ -107,8 +105,6 @@ vendor/bin/hw/vendor.huawei.hardware.perfgenius@2.0-service
 vendor/bin/hw/vendor.huawei.hardware.power@1.0-service
 vendor/bin/hw/vendor.huawei.hardware.sensors@1.0-service
 vendor/bin/hw/vendor.huawei.hardware.tp@1.0-service
-vendor/bin/hw/vendor.huawei.hardware.wifi@1.1-service
-vendor/bin/hw/wpa_supplicant;MODULE_SUFFIX=_marie
 vendor/bin/hwemerffu
 vendor/bin/iked
 vendor/bin/irqbalance
@@ -143,7 +139,6 @@ vendor/bin/vndservicemanager
 vendor/bin/wl
 vendor/bin/wpa_cli;MODULE_SUFFIX=_marie
 vendor/bin/wpa_cli_hisi
-vendor/bin/wpa_supplicant_hisi
 vendor/build.prop
 vendor/default.prop
 vendor/etc/Default_sched_config_cust.xml
@@ -2526,12 +2521,8 @@ vendor/etc/usb_audio_policy_configuration.xml
 vendor/etc/vintf/compatibility_matrix.xml
 vendor/etc/vintf/manifest.xml
 vendor/etc/vintf/manifest_skytone.xml
-vendor/etc/wifi/hostapd_hisi.conf
 vendor/etc/wifi/p2p_supplicant_hisi.conf
 vendor/etc/wifi/p2p_supplicant_overlay.conf
-vendor/etc/wifi/wpa_supplicant.conf
-vendor/etc/wifi/wpa_supplicant_hisi.conf
-vendor/etc/wifi/wpa_supplicant_overlay.conf
 vendor/firmware/BCM4345C0_003.001.025.0155.0263.hcd
 vendor/firmware/CPU_RAM_SCHED.bin
 vendor/firmware/CPU_RAM_WBS.bin
@@ -3176,8 +3167,6 @@ vendor/lib64/libjtag_wdt_ctrl.so
 vendor/lib64/libkds_ca.so
 vendor/lib64/libkeymaster3_attestation.so
 vendor/lib64/libkeymaster3device.so;MODULE_SUFFIX=_marie
-vendor/lib64/libkeystore-engine-wifi-hidl.so;MODULE_SUFFIX=_marie
-vendor/lib64/libkeystore-wifi-hidl.so;MODULE_SUFFIX=_marie
 vendor/lib64/libl2_cache.so
 vendor/lib64/liblog_higeo_hisi.so
 vendor/lib64/libmalicore.bc
@@ -3248,7 +3237,6 @@ vendor/lib64/libvidhance.so
 vendor/lib64/libvio.so
 vendor/lib64/libwebrtc_audio_preprocessing.so
 vendor/lib64/libwifi-hal-bcm.so;MODULE_SUFFIX=_marie
-vendor/lib64/libwifi-hal.so;MODULE_SUFFIX=_marie
 vendor/lib64/libwifi_bcm.so
 vendor/lib64/libwifi_ext.default.so
 vendor/lib64/libwifi_factory_test.so

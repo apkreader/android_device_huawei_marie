@@ -38,6 +38,12 @@ ISOLATION_MAP = {
     "android.hardware.graphics.allocator@2.0.so": "android.hardware.graphics.allocator@2.7.so",
     "android.hardware.graphics.mapper@2.0.so": "android.hardware.graphics.mapper@2.7.so",
     "android.hardware.graphics.mapper@2.1.so": "android.hardware.graphics.mapper@2.8.so",
+    "libcrypto.so": "libcrypt7.so",
+    "libssl.so": "libs7l.so",
+    "libxml2.so": "libxm72.so",
+    "libnl.so": "libn7.so",
+    "libz.so": "lib7.so",
+    "libbinder.so": "libbinde7.so",
 }
 
 for _k, _v in ISOLATION_MAP.items():
@@ -48,6 +54,9 @@ ENTRYPOINTS = {
         "bin/hw/android.hardware.composer.hwc3-service.drm",
         "bin/hw/android.hardware.graphics.allocator-service.minigbm",
         "lib64/hw/mapper.minigbm.so",
+        "bin/hw/android.hardware.wifi-service",
+        "bin/hw/wpa_supplicant",
+        "bin/hw/hostapd",
     ],
     "lib": [
         "lib/hw/mapper.minigbm.so",

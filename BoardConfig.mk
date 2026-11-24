@@ -89,6 +89,15 @@ TARGET_SKIP_OTA_PACKAGE := true
 
 BOARD_ROOT_EXTRA_FOLDERS += sec_storage metadata
 
+
+# Wi-Fi (Android 17 AIDL IWifi + wpa_supplicant with WPA3-SAE + hostapd)
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+WPA_SUPPLICANT_VERSION := VER_0_8_X
+BOARD_HOSTAPD_DRIVER := NL80211
+BOARD_HOSTAPD_CONFIG_80211W_MFP_OPTIONAL := true
+WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
+$(call soong_config_set,wifi,board_wlan_device,emulator)
+
 # SELinux
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 

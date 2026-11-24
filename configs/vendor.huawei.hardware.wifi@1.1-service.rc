@@ -1,7 +1,0 @@
-# libwifi_fdsan_compat.so is linked via DT_NEEDED (patchelf --add-needed)
-# so it loads under SELinux Enforcing (AT_SECURE=1 strips LD_PRELOAD).
-service wifi_ext /vendor/bin/hw/vendor.huawei.hardware.wifi@1.1-service
-    class hal
-    capabilities NET_ADMIN NET_RAW SYS_MODULE
-    user wifi
-    group wifi gps dhcp inet net_raw net_admin

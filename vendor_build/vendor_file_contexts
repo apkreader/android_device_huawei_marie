@@ -3996,3 +3996,7 @@
 /vendor/etc/init/marie-hwc3-drm\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/init/marie-power\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/vintf/manifest/marie-power\.xml u:object_r:vendor_configs_file:s0
+/vendor/bin/hw/android\.hardware\.wifi-service u:object_r:hal_wifi_default_exec:s0
+/vendor/etc/init/android\.hardware\.wifi-service\.rc u:object_r:vendor_configs_file:s0
+/vendor/etc/init/android\.hardware\.wifi\.supplicant-service\.rc u:object_r:vendor_configs_file:s0
+/vendor/etc/init/hostapd\.android\.rc u:object_r:vendor_configs_file:s0
