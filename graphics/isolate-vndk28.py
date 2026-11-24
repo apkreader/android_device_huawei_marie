@@ -10,20 +10,20 @@ under the same SONAME in /vendor/lib{,64} would shadow the VNDK 28 APEX and
 break legacy OEM HALs.
 
 This post-process hook runs on build_image.py's temporary staging directory
-(never mutating out/target/product/marie/vendor).  Starting from the HWC3 and
-minigbm entrypoints, it copies the excluded Android 17 libraries under
-same-length isolated SONAMEs (*7.so / *8.so) and rewrites DT_NEEDED across the
-graphics dependency closure using LineageOS's prebuilt patchelf.
+(never mutating out/target/product/marie/vendor).  Every isolated SONAME has
+the exact same byte length as the original, so we patch DT_NEEDED and DT_SONAME
+entries strictly in-place inside the ELF .dynstr string table — keeping LLD's
+original program headers, alignments, and PT_INTERP/PT_GNU_RELRO 100% intact.
 """
 
 from collections import deque
 from pathlib import Path
 import os
 import shutil
-import subprocess
+import struct
 import sys
 
-# Same-length SONAME renames so ELF dynamic tables stay compact and predictable.
+# Exact same-length SONAME renames for zero-relocation in-place .dynstr patching.
 ISOLATION_MAP = {
     "libbase.so": "libbas7.so",
     "libc++.so": "libc+7.so",
@@ -40,6 +40,9 @@ ISOLATION_MAP = {
     "android.hardware.graphics.mapper@2.1.so": "android.hardware.graphics.mapper@2.8.so",
 }
 
+for _k, _v in ISOLATION_MAP.items():
+    assert len(_k) == len(_v), f"Length mismatch: {_k} vs {_v}"
+
 ENTRYPOINTS = {
     "lib64": [
         "bin/hw/android.hardware.composer.hwc3-service.drm",
@@ -51,58 +54,121 @@ ENTRYPOINTS = {
     ],
 }
 
-
-def find_patchelf() -> str:
-    top = Path(__file__).resolve().parents[4]
-    candidates = [
-        top / "prebuilts/extract-tools/linux-x86/bin/patchelf-0_18",
-        top / "prebuilts/extract-tools/linux-x86/bin/patchelf",
-    ]
-    for cand in candidates:
-        if cand.is_file():
-            return str(cand)
-    found = shutil.which("patchelf")
-    if found:
-        return found
-    raise SystemExit("patchelf not found in prebuilts/extract-tools or PATH")
+SHT_DYNAMIC = 6
+DT_NULL = 0
+DT_NEEDED = 1
+DT_SONAME = 14
 
 
-def print_needed(patchelf: str, elf: Path) -> list[str]:
-    out = subprocess.check_output(
-        [patchelf, "--print-needed", str(elf)], text=True
-    )
-    return [line.strip() for line in out.splitlines() if line.strip()]
+def parse_elf_dynamic(data: bytes):
+    """Return (dynstr_offset, dynstr_size, entries) where entries are (tag, str_offset)."""
+    if data[:4] != b"\x7fELF":
+        raise ValueError("Not an ELF file")
+    ei_class = data[4]
+    ei_data = data[5]
+    if ei_data != 1:
+        raise ValueError("Only little-endian ELF supported")
+
+    if ei_class == 2:  # ELF64
+        e_shoff = struct.unpack_from("<Q", data, 40)[0]
+        e_shentsize, e_shnum = struct.unpack_from("<HH", data, 58)
+        sh_fmt = "<IIQQQQIIQQ"
+        dyn_fmt, dyn_sz = "<qQ", 16
+    elif ei_class == 1:  # ELF32
+        e_shoff = struct.unpack_from("<I", data, 32)[0]
+        e_shentsize, e_shnum = struct.unpack_from("<HH", data, 46)
+        sh_fmt = "<IIIIIIIIII"
+        dyn_fmt, dyn_sz = "<iI", 8
+    else:
+        raise ValueError(f"Unsupported ELF class {ei_class}")
+
+    sections = []
+    for i in range(e_shnum):
+        off = e_shoff + i * e_shentsize
+        sections.append(struct.unpack_from(sh_fmt, data, off))
+
+    dyn_sec = None
+    for s in sections:
+        if s[1] == SHT_DYNAMIC:
+            dyn_sec = s
+            break
+    if dyn_sec is None:
+        return 0, 0, []
+
+    dyn_off, dyn_size, dyn_link = dyn_sec[4], dyn_sec[5], dyn_sec[6]
+    str_sec = sections[dyn_link]
+    str_off, str_size = str_sec[4], str_sec[5]
+
+    entries = []
+    for pos in range(dyn_off, dyn_off + dyn_size, dyn_sz):
+        tag, val = struct.unpack_from(dyn_fmt, data, pos)
+        if tag == DT_NULL:
+            break
+        if tag in (DT_NEEDED, DT_SONAME):
+            entries.append((tag, val))
+    return str_off, str_size, entries
 
 
-def break_hardlink(path: Path) -> None:
-    st = path.stat()
-    if st.st_nlink <= 1:
-        return
-    tmp = path.with_name(path.name + ".tmp_iso")
-    shutil.copyfile(path, tmp)
-    os.chmod(tmp, st.st_mode & 0o7777)
-    os.replace(tmp, path)
+def read_cstr(data: bytes, start: int) -> str:
+    end = data.index(b"\x00", start)
+    return data[start:end].decode("ascii")
 
 
-def isolate_arch(patchelf: str, raw_vendor: Path, staging_vendor: Path, libdir: str) -> None:
-    queue: deque[Path] = deque()
+def get_needed(elf: Path) -> list[str]:
+    data = elf.read_bytes()
+    str_off, _, entries = parse_elf_dynamic(data)
+    return [read_cstr(data, str_off + val) for tag, val in entries if tag == DT_NEEDED]
+
+
+def patch_elf_inplace(elf: Path, rename_soname: str | None = None) -> bool:
+    """Patch DT_NEEDED (and optional DT_SONAME) strictly in-place inside .dynstr."""
+    raw = elf.read_bytes()
+    str_off, _, entries = parse_elf_dynamic(raw)
+    buf = bytearray(raw)
+    modified = False
+
+    for tag, val in entries:
+        pos = str_off + val
+        cur = read_cstr(raw, pos)
+        new = None
+        if tag == DT_NEEDED and cur in ISOLATION_MAP:
+            new = ISOLATION_MAP[cur]
+        elif tag == DT_SONAME and rename_soname is not None and cur != rename_soname:
+            if len(cur) != len(rename_soname):
+                raise ValueError(f"SONAME length mismatch in {elf}: {cur} -> {rename_soname}")
+            new = rename_soname
+        if new is not None:
+            nb = new.encode("ascii")
+            assert len(nb) == len(cur)
+            buf[pos : pos + len(nb)] = nb
+            modified = True
+
+    if modified:
+        st = elf.stat()
+        tmp = elf.with_name(elf.name + ".tmp_iso")
+        tmp.write_bytes(buf)
+        os.chmod(tmp, st.st_mode & 0o7777)
+        os.replace(tmp, elf)
+    return modified
+
+
+def isolate_arch(raw_vendor: Path, staging_vendor: Path, libdir: str) -> None:
+    queue: deque[tuple[Path, str | None]] = deque()
     visited: set[Path] = set()
 
     for rel in ENTRYPOINTS[libdir]:
         target = staging_vendor / rel
         if not target.is_file():
             raise SystemExit(f"isolate-vndk28: missing expected entrypoint {target}")
-        queue.append(target)
+        queue.append((target, None))
 
     while queue:
-        elf = queue.popleft()
+        elf, expected_soname = queue.popleft()
         if elf in visited:
             continue
         visited.add(elf)
 
-        needed = print_needed(patchelf, elf)
-        replace_args: list[str] = []
-
+        needed = get_needed(elf)
         for dep in needed:
             if dep in ISOLATION_MAP:
                 iso_name = ISOLATION_MAP[dep]
@@ -116,25 +182,18 @@ def isolate_arch(patchelf: str, raw_vendor: Path, staging_vendor: Path, libdir: 
                     iso_dst.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(raw_src, iso_dst)
                     os.chmod(iso_dst, 0o644)
-                    subprocess.run(
-                        [patchelf, "--set-soname", iso_name, str(iso_dst)],
-                        check=True,
-                    )
-                replace_args.extend(["--replace-needed", dep, iso_name])
                 if iso_dst not in visited:
-                    queue.append(iso_dst)
+                    queue.append((iso_dst, iso_name))
             else:
                 dep_path = staging_vendor / libdir / dep
                 if dep_path.is_file() and dep_path not in visited:
-                    queue.append(dep_path)
+                    queue.append((dep_path, None))
 
-        if replace_args:
-            break_hardlink(elf)
-            subprocess.run([patchelf, *replace_args, str(elf)], check=True)
+        patch_elf_inplace(elf, rename_soname=expected_soname)
 
     # Verify zero leaked references to raw VNDK-28-conflicting libraries.
     for elf in sorted(visited):
-        remaining = [d for d in print_needed(patchelf, elf) if d in ISOLATION_MAP]
+        remaining = [d for d in get_needed(elf) if d in ISOLATION_MAP]
         if remaining:
             raise SystemExit(
                 f"isolate-vndk28: {elf} still depends on raw VNDK28 libs: {remaining}"
@@ -155,12 +214,17 @@ def main(argv: list[str]) -> int:
 
     raw_vendor = Path(argv[1]).resolve()
     staging_vendor = Path(argv[2]).resolve()
-    patchelf = find_patchelf()
 
     for libdir in ("lib64", "lib"):
-        isolate_arch(patchelf, raw_vendor, staging_vendor, libdir)
+        isolate_arch(raw_vendor, staging_vendor, libdir)
 
-    print("isolate-vndk28: isolated Android 17 graphics HALs and verified ELF graph")
+    if not (staging_vendor / "etc/vintf/manifest.xml").is_file():
+        raise SystemExit("isolate-vndk28: missing etc/vintf/manifest.xml in staging vendor")
+    for forbidden in ("bin/boringssl_self_test64", "bin/boringssl_self_test32"):
+        if (staging_vendor / forbidden).exists():
+            raise SystemExit(f"isolate-vndk28: forbidden {forbidden} present (OVERRIDES failed?)")
+
+    print("isolate-vndk28: isolated Android 17 graphics HALs in-place and verified ELF graph")
     return 0
 
 
