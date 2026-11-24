@@ -1,0 +1,22 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+cc_binary {
+    name: "android.hardware.usb-service.marie",
+    vendor: true,
+    relative_install_path: "hw",
+    compile_multilib: "64",
+    stl: "libc++_static",
+    shared_libs: [
+        "libbinder_ndk",
+        "liblog",
+    ],
+    static_libs: [
+        "android.hardware.usb-V1-ndk",
+        "android.hardware.usb.gadget-V1-ndk",
+    ],
+    srcs: ["UsbService.cpp"],
+    init_rc: ["marie-usb.rc"],
+    vintf_fragments: ["marie-usb.xml"],
+    cflags: ["-Wall", "-Wextra", "-Werror"],
+}

@@ -98,6 +98,7 @@ PRODUCT_PACKAGES += \
     libminijail.vendor \
     android.hardware.lights-service.marie \
     android.hardware.power-service.marie \
+    android.hardware.usb-service.marie \
     android.hardware.wifi-service \
     wpa_supplicant \
     hostapd

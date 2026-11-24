@@ -72,7 +72,6 @@ vendor/bin/hw/android.hardware.media.omx@1.0-service
 vendor/bin/hw/android.hardware.memtrack@1.0-service;DISABLE_CHECKELF
 vendor/bin/hw/android.hardware.secure_element@1.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/android.hardware.thermal@1.0-service;MODULE_SUFFIX=_marie
-vendor/bin/hw/android.hardware.usb@1.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/rild;MODULE_SUFFIX=_marie
 vendor/bin/hw/vendor.huawei.hardware.audio@4.0-service;DISABLE_CHECKELF
 vendor/bin/hw/vendor.huawei.hardware.biometrics.fingerprint@2.1-service
@@ -2381,7 +2380,6 @@ vendor/etc/init/android.hardware.media.omx@1.0-service.rc
 vendor/etc/init/android.hardware.memtrack@1.0-service.rc;DISABLE_CHECKELF
 vendor/etc/init/android.hardware.secure_element@1.0-service.rc
 vendor/etc/init/android.hardware.thermal@1.0-service.rc
-vendor/etc/init/android.hardware.usb@1.0-service.rc
 vendor/etc/init/aptouch_daemon.rc
 vendor/etc/init/bsoh.rc
 vendor/etc/init/charger/init.charger.rc

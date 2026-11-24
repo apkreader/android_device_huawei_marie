@@ -75,7 +75,7 @@ blob_fixups = {
     .regex_replace(
         r'    <hal format="hidl">\n'
         r'        <name>(?:android\.hardware\.graphics\.(?:allocator|composer|mapper)'
-        r'|(?:android|vendor\.huawei)\.hardware\.wifi(?:\.hostapd|\.supplicant)?)</name>'
+        r'|(?:android|vendor\.huawei)\.hardware\.wifi(?:\.hostapd|\.supplicant)?|android\.hardware\.usb)</name>'
         r'[\s\S]*?    </hal>\n',
         '',
     ),
@@ -116,7 +116,6 @@ suffixed_modules = (
     'android.hardware.soundtrigger@2.0-impl',
     'android.hardware.thermal@1.0-impl',
     'android.hardware.thermal@1.0-service',
-    'android.hardware.usb@1.0-service',
     'audio.r_submix.default',
     'audio.usb.default',
     'awk',
@@ -229,7 +228,6 @@ MANIFEST_OVERRIDES = (
     'android.hardware.secure_element@1.0-service',
     'android.hardware.thermal@1.0-impl',
     'android.hardware.thermal@1.0-service',
-    'android.hardware.usb@1.0-service',
     'audio.r_submix.default',
     'audio.usb.default',
     'boringssl_self_test_vendor',
