@@ -61,3 +61,13 @@ BOARD_VENDORIMAGE_EXCLUDED_FILES += \
 # Replaced by device/huawei/marie/graphics/marie-hwc3-drm.rc (SFMainPolicy big-core affinity)
 BOARD_VENDORIMAGE_EXCLUDED_FILES += \
     etc/init/hwc3-drm.rc
+
+# Compile vendor policy at boot rather than shipping build-specific precompiled_sepolicy
+BOARD_VENDORIMAGE_EXCLUDED_FILES += \
+    etc/selinux/precompiled_sepolicy \
+    etc/selinux/precompiled_sepolicy.plat_and_mapping.sha256
+
+# Provided by VNDK 28 APEX (libminijail links cleanly against VNDK 28 libcap.so)
+BOARD_VENDORIMAGE_EXCLUDED_FILES += \
+    lib/libcap.so \
+    lib64/libcap.so

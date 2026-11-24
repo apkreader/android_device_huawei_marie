@@ -15,6 +15,26 @@ DEVICE_DIR = Path(__file__).resolve().parent
 VENDOR_DIR = DEVICE_DIR.parents[2] / 'vendor' / 'huawei' / 'marie'
 MARIE612_CIL = DEVICE_DIR / 'sepolicy' / 'vendor_sepolicy_marie612.cil'
 MARIE612_MARKER = '; Marie Linux 6.12 / Panfrost / HWC3 / SELinux Enforcing'
+MARIE612_FC_MARKER = '# Marie Linux 6.12 DRM/Panfrost/Battery labels'
+MARIE612_FC_EXTRA = (
+    '/dev/dri\t\tu:object_r:gpu_device:s0\n'
+    '/dev/dri/card[0-9]+\t\tu:object_r:gpu_device:s0\n'
+    '/dev/dri/renderD[0-9]+\t\tu:object_r:gpu_device:s0\n'
+    '/sys/devices/platform/spmi-0/0-00/power_supply(/.*)?\t\tu:object_r:sysfs_batteryinfo:s0\n'
+    '/sys/devices/platform/e82c0000\\.mali/uevent\t\tu:object_r:sysfs_gpu:s0\n'
+)
+
+
+def append_marie612_fc(ctx, file, file_path, *args, **kwargs):
+    path = Path(file_path)
+    text = path.read_text(encoding='utf-8')
+    if MARIE612_FC_MARKER not in text and '/dev/dri/card[0-9]+' not in text:
+        if not text.endswith('\n'):
+            text += '\n'
+        text += f'\n{MARIE612_FC_MARKER}\n{MARIE612_FC_EXTRA}'
+        path.write_text(text, encoding='utf-8')
+
+
 
 # Non-extracted assets in vendor/huawei/marie preserved across extract-utils cleanup.
 PRESERVED_VENDOR_ENTRIES = ('mesa', 'README.md', 'LICENSE')
@@ -44,6 +64,8 @@ blob_fixups = {
     .regex_replace(r'^<\?xml version="3\.0"', '<?xml version="1.0"'),
     'vendor/etc/init/android.hardware.bluetooth@1.0-service.rc': blob_fixup()
     .regex_replace(r'(?m)^([ \t]*)//', r'\g<1>#'),
+    'vendor/etc/selinux/vendor_file_contexts': blob_fixup()
+    .call(append_marie612_fc),
     'vendor/etc/selinux/plat_pub_versioned.cil': blob_fixup()
     .regex_replace(perf_event_permission, r'\g<1>perfmon'),
     'vendor/etc/vintf/manifest.xml': blob_fixup()
@@ -337,7 +359,7 @@ def finalize_vendor_tree():
         stripped = line.strip().rstrip('\\').strip()
         # Rename manifest.xml package reference
         if stripped == 'manifest.xml':
-            line = line.replace('manifest.xml', 'marie-vendor-manifest')
+            out_lines.append(line.replace('manifest.xml', 'marie-vendor-manifest'))
             continue
         # Remove packages that are installed via copy-one-file or PRODUCT_COPY_FILES
         if stripped in removed_pkgs:
@@ -369,7 +391,10 @@ def finalize_vendor_tree():
                 f'    vendor/huawei/marie/proprietary/vendor/{rel}:$(TARGET_COPY_OUT_VENDOR)/{rel}{cont}'
             )
 
-    mk_path.write_text('\n'.join(fixed_lines) + '\n', encoding='utf-8')
+    mk_out = '\n'.join(fixed_lines) + '\n'
+    assert 'marie-vendor-manifest' in mk_out, 'marie-vendor-manifest missing from marie-vendor.mk!'
+    assert '$(TARGET_COPY_OUT_VENDOR)/etc/ueventd.rc' in mk_out, 'etc/ueventd.rc missing from marie-vendor.mk!'
+    mk_path.write_text(mk_out, encoding='utf-8')
 
     # 3. Generate vendor/huawei/marie/Android.mk
     amk_lines = [

@@ -2339,8 +2339,6 @@ vendor/etc/default_volume_tables.xml
 vendor/etc/device_state_monitor.conf
 vendor/etc/dhcpcd/dhcpcd.conf
 vendor/etc/factory_modem.cfg
-vendor/etc/fs_config_dirs
-vendor/etc/fs_config_files
 vendor/etc/fstab.kirin710
 vendor/etc/fstab.modem
 vendor/etc/geoloc.conf
