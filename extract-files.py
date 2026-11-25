@@ -62,6 +62,11 @@ blob_fixups = {
     .regex_replace(r'^<\?xml version="3\.0"', '<?xml version="1.0"'),
     'vendor/etc/init/android.hardware.bluetooth@1.0-service.rc': blob_fixup()
     .regex_replace(r'(?m)^([ \t]*)//', r'\g<1>#'),
+    'vendor/etc/init/vendor.huawei.hardware.audio@4.0-service.rc': blob_fixup()
+    .regex_replace(
+        r'(?m)^([ \t]*setprop[ \t]+ro\.hardware\.audio\.primary[ \t]+)hisi(?=[ \t]*\r?$)',
+        r'\g<1>marie',
+    ),
     'vendor/etc/init/connectivity/init.connectivity.hi1102.rc': blob_fixup()
     .regex_replace(
         r'(?m)^service (?:wpa_supplicant|hostapd) /[\s\S]*?(?=\n(?:service |on |#|$))',
