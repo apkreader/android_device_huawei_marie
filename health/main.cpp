@@ -25,6 +25,7 @@ using aidl::android::hardware::health::BatteryHealthData;
 using aidl::android::hardware::health::BatteryPartStatus;
 using aidl::android::hardware::health::HalHealthLoop;
 using aidl::android::hardware::health::Health;
+using aidl::android::hardware::health::HealthInfo;
 using aidl::android::hardware::health::StorageInfo;
 using aidl::android::hardware::health::charger::ChargerCallback;
 using aidl::android::hardware::health::charger::ChargerModeMain;
@@ -62,7 +63,20 @@ class MarieHealth : public Health {
 
     ndk::ScopedAStatus getBatteryHealthData(BatteryHealthData* out) override {
         Health::getBatteryHealthData(out);
+        FillMarieBatteryHealth(out);
+        return ndk::ScopedAStatus::ok();
+    }
 
+  protected:
+    void UpdateHealthInfo(HealthInfo* health_info) override {
+        if (!health_info->batteryHealthData.has_value()) {
+            health_info->batteryHealthData.emplace();
+        }
+        FillMarieBatteryHealth(&(*health_info->batteryHealthData));
+    }
+
+  private:
+    void FillMarieBatteryHealth(BatteryHealthData* out) {
         int64_t full = getFullChargeUah();
         int64_t design = getFullChargeDesignCapacityUah();
         if (full <= 0) full = 3240000;
@@ -83,8 +97,9 @@ class MarieHealth : public Health {
         if (out->batteryVoltageMinDesignUv <= 0) {
             out->batteryVoltageMinDesignUv = 3400000;
         }
-        return ndk::ScopedAStatus::ok();
     }
+
+  public:
 
     ndk::ScopedAStatus getStorageInfo(std::vector<StorageInfo>* out) override {
         StorageInfo info{};
