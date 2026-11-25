@@ -121,7 +121,7 @@ class Boosts {
          "/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq", 1709000, {}},
         {"/sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq",
          "/sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq", 2189000, {}},
-        {"/sys/class/devfreq/gpufreq/min_freq", "/sys/class/devfreq/gpufreq/max_freq", 826000000, {}},
+        {"/sys/class/devfreq/e82c0000.mali/min_freq", "/sys/class/devfreq/e82c0000.mali/max_freq", 999000000, {}},
     }};
     std::array<Clock::time_point, Count> deadlines_{};
     std::mutex mutex_;
@@ -143,7 +143,7 @@ constexpr int64_t Mask(Enum value) {
 class Power final : public BnPower {
   public:
     ScopedAStatus setMode(Mode mode, bool enabled) override {
-        if (mode == Mode::LAUNCH) boosts_.Set(Boosts::Launch, enabled ? 1500ms : -1ms);
+        if (mode == Mode::LAUNCH) boosts_.Set(Boosts::Launch, enabled ? 2000ms : -1ms);
         return ScopedAStatus::ok();
     }
 
@@ -156,11 +156,11 @@ class Power final : public BnPower {
         switch (boost) {
             case Boost::INTERACTION:
                 boosts_.Set(Boosts::Touch, std::chrono::milliseconds(
-                    durationMs < 0 ? -1 : durationMs == 0 ? 500 : std::clamp(durationMs, 80, 1200)));
+                    durationMs < 0 ? -1 : durationMs == 0 ? 1000 : std::clamp(durationMs, 800, 1500)));
                 break;
             case Boost::DISPLAY_UPDATE_IMMINENT:
                 boosts_.Set(Boosts::Display, std::chrono::milliseconds(
-                    durationMs < 0 ? -1 : durationMs == 0 ? 80 : std::min(durationMs, 1200)));
+                    durationMs < 0 ? -1 : durationMs == 0 ? 300 : std::clamp(durationMs, 300, 1200)));
                 break;
             default:
                 break;

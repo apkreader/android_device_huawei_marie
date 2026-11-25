@@ -112,3 +112,11 @@
 (allow vold_28_0 sysfs_28_0 (dir (open read search getattr)))
 (allow vold_28_0 sysfs_28_0 (file (open read getattr)))
 (allow vold_28_0 sysfs_28_0 (lnk_file (read getattr)))
+
+; Allow Power HAL to boost Mali-G51 Panfrost devfreq (/sys/class/devfreq/e82c0000.mali/min_freq)
+(allow hal_power_default sysfs_28_0 (dir (open read search getattr)))
+(allow hal_power_default sysfs_28_0 (lnk_file (read getattr)))
+(allow hal_power_default sysfs_28_0 (file (open read write getattr)))
+(allow system_server_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))
+(allow init_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))
+(allow vendor_init_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))

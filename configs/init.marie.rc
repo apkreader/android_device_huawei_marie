@@ -14,6 +14,3 @@ on init
     chown system system /dev/cpuset/marie-display/cgroup.procs
     chmod 0664 /dev/cpuset/marie-display/tasks
     chmod 0664 /dev/cpuset/marie-display/cgroup.procs
-
-on boot && property:ro.boot.odm.conn.schiptype=hi1102
-    start octty
