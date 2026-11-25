@@ -31,8 +31,11 @@ Working on Linux 6.12 (cold-boot SELinux Enforcing):
   calls still need testing.
 - **Flashlight**: Quick Settings torch with 4-level brightness via
   `leds-marie-flash` and Android 17 AIDL V4 `ICameraProvider` HAL
-- **System / Storage**: SELinux Enforcing, native BPF & FUSE-BPF,
-  `/storage/emulated/0`, screenshots, OMX/Configstore, live USB ADB
+- **Security**: Hardware File-Based Encryption (FBE), TrustCore TEE with UFS
+  RPMB, Hardware Keymaster 3.0, Hardware Gatekeeper (PIN / Pattern / Password
+  lock & unlock), `/sec_storage`, SELinux Enforcing
+- **System / Storage**: Native BPF & FUSE-BPF, `/storage/emulated/0`,
+  screenshots, OMX/Configstore, live USB ADB, 2 GB ZRAM swap
 - **Recovery**: LineageOS Recovery works on both stock 4.9 and Linux 6.12
   kernels (UI + touch + ADB). LineageOS itself targets Linux 6.12 exclusively.
 
