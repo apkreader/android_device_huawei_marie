@@ -44,6 +44,7 @@ ISOLATION_MAP = {
     "libnl.so": "libn7.so",
     "libz.so": "lib7.so",
     "libbinder.so": "libbinde7.so",
+    "libpng.so": "libpn7.so",
 }
 
 for _k, _v in ISOLATION_MAP.items():
@@ -57,6 +58,7 @@ ENTRYPOINTS = {
         "bin/hw/android.hardware.wifi-service",
         "bin/hw/wpa_supplicant",
         "bin/hw/hostapd",
+        "bin/hw/android.hardware.health-service.marie",
     ],
     "lib": [
         "lib/hw/mapper.minigbm.so",

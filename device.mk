@@ -99,6 +99,7 @@ PRODUCT_PACKAGES += \
     android.hardware.lights-service.marie \
     android.hardware.power-service.marie \
     android.hardware.usb-service.marie \
+    android.hardware.health-service.marie \
     android.hardware.wifi-service \
     wpa_supplicant \
     hostapd

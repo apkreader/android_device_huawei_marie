@@ -67,7 +67,6 @@
 /vendor/bin/hw/android\.hardware\.gatekeeper@1\.0\-service u:object_r:hal_gatekeeper_default_exec:s0
 /vendor/bin/hw/android\.hardware\.graphics\.allocator@2\.0\-service u:object_r:hal_graphics_allocator_default_exec:s0
 /vendor/bin/hw/android\.hardware\.graphics\.composer@2\.2\-service u:object_r:hal_graphics_composer_default_exec:s0
-/vendor/bin/hw/android\.hardware\.health@2\.0\-service u:object_r:hal_health_default_exec:s0
 /vendor/bin/hw/android\.hardware\.ir@1\.0\-service u:object_r:hal_ir_default_exec:s0
 /vendor/bin/hw/android\.hardware\.keymaster@3\.0\-service u:object_r:hal_keymaster_default_exec:s0
 /vendor/bin/hw/android\.hardware\.media\.omx@1\.0\-service u:object_r:mediacodec_exec:s0
@@ -3675,7 +3674,6 @@
 /vendor/etc/init/android\.hardware\.gatekeeper@1\.0\-service\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/init/android\.hardware\.graphics\.allocator@2\.0\-service\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/init/android\.hardware\.graphics\.composer@2\.2\-service\.rc u:object_r:vendor_configs_file:s0
-/vendor/etc/init/android\.hardware\.health@2\.0\-service\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/init/android\.hardware\.ir@1\.0\-service\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/init/android\.hardware\.keymaster@3\.0\-service\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/init/android\.hardware\.media\.omx@1\.0\-service\.rc u:object_r:vendor_configs_file:s0
@@ -4003,3 +4001,6 @@
 /vendor/bin/hw/android\.hardware\.usb-service\.marie u:object_r:hal_usb_default_exec:s0
 /vendor/etc/init/marie-usb\.rc u:object_r:vendor_configs_file:s0
 /vendor/etc/vintf/manifest/marie-usb\.xml u:object_r:vendor_configs_file:s0
+/vendor/bin/hw/android\.hardware\.health-service\.marie u:object_r:hal_health_default_exec:s0
+/vendor/etc/init/marie-health\.rc u:object_r:vendor_configs_file:s0
+/vendor/etc/vintf/manifest/marie-health\.xml u:object_r:vendor_configs_file:s0

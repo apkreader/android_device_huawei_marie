@@ -1,0 +1,18 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+cc_binary {
+    name: "android.hardware.health-service.marie",
+    vendor: true,
+    relative_install_path: "hw",
+    compile_multilib: "64",
+    defaults: ["libhealth_aidl_impl_user"],
+    static_libs: ["libhealth_aidl_impl"],
+    srcs: ["main.cpp"],
+    init_rc: ["marie-health.rc"],
+    vintf_fragments: ["marie-health.xml"],
+    overrides: [
+        "charger",
+        "android.hardware.health@2.0-service",
+    ],
+}

@@ -65,7 +65,6 @@ vendor/bin/hw/android.hardware.drm@1.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/android.hardware.drm@1.1-service.clearkey
 vendor/bin/hw/android.hardware.drm@1.1-service.widevine
 vendor/bin/hw/android.hardware.gatekeeper@1.0-service;MODULE_SUFFIX=_marie
-vendor/bin/hw/android.hardware.health@2.0-service
 vendor/bin/hw/android.hardware.ir@1.0-service
 vendor/bin/hw/android.hardware.keymaster@3.0-service;MODULE_SUFFIX=_marie
 vendor/bin/hw/android.hardware.media.omx@1.0-service
@@ -2373,7 +2372,6 @@ vendor/etc/init/android.hardware.drm@1.0-service.rc
 vendor/etc/init/android.hardware.drm@1.1-service.clearkey.rc
 vendor/etc/init/android.hardware.drm@1.1-service.widevine.rc
 vendor/etc/init/android.hardware.gatekeeper@1.0-service.rc
-vendor/etc/init/android.hardware.health@2.0-service.rc
 vendor/etc/init/android.hardware.ir@1.0-service.rc
 vendor/etc/init/android.hardware.keymaster@3.0-service.rc
 vendor/etc/init/android.hardware.media.omx@1.0-service.rc

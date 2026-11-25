@@ -77,3 +77,7 @@ BOARD_VENDORIMAGE_EXCLUDED_FILES += \
     lib64/libssl.so \
     lib64/libxml2.so \
     lib64/libnl.so
+
+# Also exclude Android 17 libpng (isolated via libpn7.so for AIDL health/charger UI)
+BOARD_VENDORIMAGE_EXCLUDED_FILES += \
+    lib64/libpng.so
