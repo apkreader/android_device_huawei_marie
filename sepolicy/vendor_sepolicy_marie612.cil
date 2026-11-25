@@ -121,6 +121,17 @@
 (allow init_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))
 (allow vendor_init_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))
 
+; Allow Torch AIDL CameraProvider HAL to control /sys/class/leds/torch/brightness
+(allow hal_camera_default sysfs_28_0 (dir (open read search getattr)))
+(allow hal_camera_default sysfs_28_0 (lnk_file (read getattr)))
+(allow hal_camera_default sysfs_28_0 (file (open read write getattr)))
+(allow hal_camera_default sysfs_leds (dir (open read search getattr)))
+(allow hal_camera_default sysfs_leds (lnk_file (read getattr)))
+(allow hal_camera_default sysfs_leds (file (open read write getattr)))
+(allow hal_camera_default sysfs_led (dir (open read search getattr)))
+(allow hal_camera_default sysfs_led (lnk_file (read getattr)))
+(allow hal_camera_default sysfs_led (file (open read write getattr)))
+
 ; Allow Audio HAL full ALSA PCM & Mixer access
 (allow hal_audio_default audio_device_28_0 (dir (open read search getattr)))
 (allow hal_audio_default audio_device_28_0 (chr_file (open read write ioctl map getattr)))

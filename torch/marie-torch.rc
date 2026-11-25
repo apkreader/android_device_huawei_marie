@@ -1,0 +1,14 @@
+# Copyright (C) 2026 apkreader
+# SPDX-License-Identifier: Apache-2.0
+
+on boot
+    chown system system /sys/class/leds/torch/brightness
+    chmod 0664 /sys/class/leds/torch/brightness
+    chown system system /sys/class/leds/torch/max_brightness
+    chmod 0444 /sys/class/leds/torch/max_brightness
+
+service marie-torch /vendor/bin/hw/android.hardware.camera.provider-service.marie
+    class hal
+    user system
+    group system
+    interface aidl android.hardware.camera.provider.ICameraProvider/internal/0

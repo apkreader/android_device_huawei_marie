@@ -1,0 +1,32 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+cc_binary {
+    name: "android.hardware.camera.provider-service.marie",
+    vendor: true,
+    relative_install_path: "hw",
+    compile_multilib: "64",
+    stl: "libc++_static",
+    shared_libs: [
+        "libbinder_ndk",
+        "liblog",
+    ],
+    static_libs: [
+        "android.hardware.camera.provider-V4-ndk",
+        "android.hardware.camera.device-V4-ndk",
+        "android.hardware.camera.common-V1-ndk",
+        "android.hardware.camera.metadata-V3-ndk",
+        "android.hardware.common-V2-ndk",
+        "android.hardware.common.fmq-V1-ndk",
+        "android.hardware.graphics.common-V7-ndk",
+        "libcamera_metadata",
+    ],
+    srcs: ["TorchProvider.cpp"],
+    init_rc: ["marie-torch.rc"],
+    vintf_fragments: ["marie-torch.xml"],
+    cflags: [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+}

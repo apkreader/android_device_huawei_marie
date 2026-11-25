@@ -107,6 +107,7 @@ PRODUCT_PACKAGES += \
     android.hardware.power-service.marie \
     android.hardware.usb-service.marie \
     android.hardware.health-service.marie \
+    android.hardware.camera.provider-service.marie \
     audio.primary.marie \
     android.hardware.wifi-service \
     wpa_supplicant \
