@@ -617,14 +617,31 @@ static ssize_t in_read(struct audio_stream_in *stream, void *buffer, size_t byte
 
         if (in->dev->mic_mute) {
             memset(dst + out_done * out_ch, 0, prod_out * out_frame_bytes);
+        } else if (in->sample_rate == MARIE_HW_RATE && got_hw >= prod_out) {
+            for (size_t i = 0; i < prod_out; ++i) {
+                int16_t l = in->hw_buf[i * 2];
+                int16_t r = in->hw_buf[i * 2 + 1];
+                if (out_ch == 1) {
+                    dst[out_done + i] = (int16_t)(((int32_t)l + (int32_t)r) / 2);
+                } else {
+                    dst[(out_done + i) * 2] = l;
+                    dst[(out_done + i) * 2 + 1] = r;
+                }
+            }
         } else {
             for (size_t i = 0; i < prod_out; ++i) {
-                size_t src_idx = (i * got_hw) / prod_out;
-                if (src_idx >= got_hw) src_idx = got_hw - 1;
-                int16_t l = in->hw_buf[src_idx * 2];
-                int16_t r = in->hw_buf[src_idx * 2 + 1];
+                uint64_t pos_fp = ((uint64_t)i * (uint64_t)got_hw << 16) / prod_out;
+                size_t idx0 = (size_t)(pos_fp >> 16);
+                size_t idx1 = (idx0 + 1 < got_hw) ? (idx0 + 1) : (got_hw - 1);
+                int32_t frac = (int32_t)(pos_fp & 0xffffU);
+                int32_t l0 = in->hw_buf[idx0 * 2];
+                int32_t r0 = in->hw_buf[idx0 * 2 + 1];
+                int32_t l1 = in->hw_buf[idx1 * 2];
+                int32_t r1 = in->hw_buf[idx1 * 2 + 1];
+                int16_t l = (int16_t)((l0 * (65536 - frac) + l1 * frac) >> 16);
+                int16_t r = (int16_t)((r0 * (65536 - frac) + r1 * frac) >> 16);
                 if (out_ch == 1) {
-                    dst[(out_done + i)] = (int16_t)(((int32_t)l + (int32_t)r) / 2);
+                    dst[out_done + i] = (int16_t)(((int32_t)l + (int32_t)r) / 2);
                 } else {
                     dst[(out_done + i) * 2] = l;
                     dst[(out_done + i) * 2 + 1] = r;
@@ -962,7 +979,7 @@ static int adev_open(const hw_module_t *module, const char *name, hw_device_t **
     ctl_set_int("Speaker Volume", 100);
     ctl_set_int("Headphone Volume", 15);
     ctl_set_int("Earpiece Volume", 14);
-    ctl_set_int("Mic Volume", 6);
+    ctl_set_int("Mic Volume", 2);
     apply_output_route_locked(adev, AUDIO_DEVICE_OUT_SPEAKER);
     apply_input_route_locked(adev, AUDIO_DEVICE_IN_BUILTIN_MIC);
 
