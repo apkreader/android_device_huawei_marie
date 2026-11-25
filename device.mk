@@ -85,6 +85,13 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/graphics/configstore@1.1.policy:$(TARGET_COPY_OUT_VENDOR)/etc/seccomp_policy/configstore@1.1.policy \
     $(LOCAL_PATH)/graphics/vendor_service_contexts:$(TARGET_COPY_OUT_VENDOR)/etc/selinux/vendor_service_contexts
 
+# Audio policy & AOSP volume curves for Kirin 710 primary audio HAL
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_configuration.xml \
+    $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio/audio_policy_configuration.xml \
+    $(LOCAL_PATH)/audio/audio_policy_volumes.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_volumes.xml \
+    $(LOCAL_PATH)/audio/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml
+
 # VINTF & linker configuration
 PRODUCT_PACKAGES += framework_compatibility_matrix.3.xml
 PRODUCT_VENDOR_LINKER_CONFIG_FRAGMENTS += $(LOCAL_PATH)/power/linker.config.json
@@ -100,6 +107,7 @@ PRODUCT_PACKAGES += \
     android.hardware.power-service.marie \
     android.hardware.usb-service.marie \
     android.hardware.health-service.marie \
+    audio.primary.marie \
     android.hardware.wifi-service \
     wpa_supplicant \
     hostapd

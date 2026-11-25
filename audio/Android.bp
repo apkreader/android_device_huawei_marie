@@ -1,0 +1,24 @@
+// Copyright (C) 2026 apkreader
+// SPDX-License-Identifier: Apache-2.0
+
+cc_library_shared {
+    name: "audio.primary.marie",
+    vendor: true,
+    relative_install_path: "hw",
+    compile_multilib: "64",
+    srcs: ["audio_hw.c"],
+    header_libs: [
+        "libhardware_headers",
+        "libsystem_headers",
+        "libaudio_system_headers",
+    ],
+    shared_libs: [
+        "liblog",
+    ],
+    cflags: [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-Wno-unused-parameter",
+    ],
+}

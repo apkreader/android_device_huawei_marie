@@ -120,3 +120,7 @@
 (allow system_server_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))
 (allow init_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))
 (allow vendor_init_28_0 sysfs_zram_28_0 (lnk_file (read getattr)))
+
+; Allow Audio HAL full ALSA PCM & Mixer access
+(allow hal_audio_default audio_device_28_0 (dir (open read search getattr)))
+(allow hal_audio_default audio_device_28_0 (chr_file (open read write ioctl map getattr)))

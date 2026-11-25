@@ -27,6 +27,7 @@ Working on Linux 6.12 (cold-boot SELinux Enforcing):
   keys, PMIC `reboot-mode`
 - **Input / Backlight**: Synaptics TD4320 ZeroFlash SPI touchscreen, TI LM36274
   backlight via `android.hardware.lights-service.marie`
+- **Audio**: Speaker playback works. Headphones, mic and calls still need testing.
 - **System / Storage**: SELinux Enforcing, native BPF & FUSE-BPF,
   `/storage/emulated/0`, screenshots, OMX/Configstore, live USB ADB
 - **Recovery**: LineageOS Recovery works on both stock 4.9 and Linux 6.12
@@ -36,7 +37,7 @@ Still work in progress on Linux 6.12:
 
 - **Bluetooth**: Hi1102 BFGX Bluetooth bring-up
 - **Baseband / RIL**: Balong modem driver port
-- **Audio, Vibration, Flashlight, Camera, Sensors, microSD**
+- **Vibration, Flashlight, Camera, Sensors, microSD**
 
 The hardware base is MAR-L21B 9.1.0.399 (C431). The boot image uses header
 version 1 and belongs on the 24 MiB `kernel` partition. The 32 MiB
