@@ -7,6 +7,10 @@ cc_binary {
     relative_install_path: "hw",
     compile_multilib: "64",
     stl: "libc++_static",
+    header_libs: [
+        "libcutils_headers",
+        "libsystem_headers",
+    ],
     shared_libs: [
         "libbinder_ndk",
         "libcamera_metadata",

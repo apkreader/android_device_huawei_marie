@@ -5,6 +5,9 @@ on early-init
     mkdir /dev/block/bootdevice 0755 root root
     symlink /dev/block/by-name /dev/block/bootdevice/by-name
     mount tmpfs tmpfs /metadata mode=0775,uid=0,gid=1000
+    setprop debug.sf.late.sf.duration 12500000
+    setprop debug.sf.early.sf.duration 13500000
+    setprop debug.sf.earlyGl.sf.duration 14500000
 
 on init
     mkdir /dev/cpuset/marie-display
@@ -14,3 +17,7 @@ on init
     chown system system /dev/cpuset/marie-display/cgroup.procs
     chmod 0664 /dev/cpuset/marie-display/tasks
     chmod 0664 /dev/cpuset/marie-display/cgroup.procs
+
+on property:sys.boot_completed=1
+    write /sys/devices/system/cpu/cpufreq/policy0/schedutil/rate_limit_us 500
+    write /sys/devices/system/cpu/cpufreq/policy4/schedutil/rate_limit_us 500

@@ -160,7 +160,7 @@ class Power final : public BnPower {
                 break;
             case Boost::DISPLAY_UPDATE_IMMINENT:
                 boosts_.Set(Boosts::Display, std::chrono::milliseconds(
-                    durationMs < 0 ? -1 : durationMs == 0 ? 300 : std::clamp(durationMs, 300, 1200)));
+                    durationMs < 0 ? -1 : durationMs == 0 ? 500 : std::clamp(durationMs, 500, 1200)));
                 break;
             default:
                 break;
